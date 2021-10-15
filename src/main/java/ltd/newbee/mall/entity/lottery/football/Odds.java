@@ -15,6 +15,14 @@ public class Odds {
     @ApiModelProperty("负， 赔率")
     private String a;
 
+    @ApiModelProperty("负赔率趋势： -1 下跌， 1 上涨， 0 不变")
+    private String af;
+
+    @ApiModelProperty("负赔率趋势： -1 下跌， 1 上涨， 0 不变")
+    private String df;
+    @ApiModelProperty("负赔率趋势： -1 下跌， 1 上涨， 0 不变")
+    private String hf;
+
     @ApiModelProperty("负支持率")
     private String aRate;
 
@@ -40,5 +48,8 @@ public class Odds {
 
     @ApiModelProperty("更新时间 eg: 21:36:14")
     private String updateTime;
+
+    @ApiModelProperty("让球数")
+    private String goalLine;
 
 }

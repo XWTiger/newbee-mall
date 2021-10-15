@@ -13,6 +13,7 @@ import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.controller.vo.NewBeeMallUserVO;
 import ltd.newbee.mall.entity.MallUser;
 import ltd.newbee.mall.service.NewBeeMallUserService;
+import ltd.newbee.mall.util.JwtUtils;
 import ltd.newbee.mall.util.MD5Util;
 import ltd.newbee.mall.util.Result;
 import ltd.newbee.mall.util.ResultGenerator;
@@ -82,7 +83,11 @@ public class PersonalController {
         if (ServiceResultEnum.SUCCESS.getResult().equals(loginResult)) {
             //删除session中的verifyCode
             httpSession.removeAttribute(Constants.MALL_VERIFY_CODE_KEY);
-            return ResultGenerator.genSuccessResult();
+            Result result =  ResultGenerator.genSuccessResult();
+            String token = JwtUtils.createJWT(loginName, "test", 30000);
+            System.out.println(token);
+            result.setData(token);
+            return result;
         }
         //登录失败
         return ResultGenerator.genFailResult(loginResult);

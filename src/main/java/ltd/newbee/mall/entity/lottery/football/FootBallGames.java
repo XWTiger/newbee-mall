@@ -20,7 +20,7 @@ public class FootBallGames extends Base {
     private List<FootBallList> matchInfoList;
 
     @ApiModelProperty("匹配时间列表")
-    private MatchDate matchDateList;
+    private List<MatchDate> matchDateList;
 
     @ApiModelProperty("联赛列表")
     private List<League> leagueList;

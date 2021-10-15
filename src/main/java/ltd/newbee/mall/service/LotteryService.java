@@ -1,7 +1,9 @@
 package ltd.newbee.mall.service;
 
+import ltd.newbee.mall.common.GameType;
 import ltd.newbee.mall.entity.common.PageCL;
 import ltd.newbee.mall.entity.lottery.LoterryPl5;
+import ltd.newbee.mall.entity.lottery.football.FootBallGames;
 
 /**
  * this is for lottery service， just request official api
@@ -21,5 +23,8 @@ public interface LotteryService {
      * @return
      */
     PageCL<LoterryPl5> getLotteryPl5(String gameNo, String provinceId, String isVerify, String termLimits);
+
+
+    FootBallGames getVictoryOrDefeatFootBallGames(GameType gameType) throws Exception;
 
 }

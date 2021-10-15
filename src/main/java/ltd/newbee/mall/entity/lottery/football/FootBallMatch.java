@@ -105,5 +105,23 @@ public class FootBallMatch  {
 
     private List<Pool> poolList;
 
+    @ApiModelProperty("主队赔率，以及让球情况")
+    private Odds had;
+
+
+    @ApiModelProperty("客队赔率，以及让球情况")
+    private Odds hhad;
+
+    @ApiModelProperty("比分")
+    private Crs crs;
+
+    @ApiModelProperty("总进球数")
+    private Ttg ttg;
+
+    @ApiModelProperty("半场胜平负")
+    private HalfCourt hafu;
+
+
+
 
 }
