@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@ApiModel("赔率")
+@ApiModel("（让）胜负平赔率")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

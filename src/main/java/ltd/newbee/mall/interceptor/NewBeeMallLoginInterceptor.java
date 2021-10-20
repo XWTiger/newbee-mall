@@ -8,7 +8,10 @@
  */
 package ltd.newbee.mall.interceptor;
 
+import com.alibaba.fastjson.JSON;
 import ltd.newbee.mall.common.Constants;
+import ltd.newbee.mall.entity.common.CheckResult;
+import ltd.newbee.mall.util.JwtUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,7 +36,14 @@ public class NewBeeMallLoginInterceptor implements HandlerInterceptor {
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         } else {
-            return true;
+            String token = request.getParameter("token");
+            CheckResult checkResult = JwtUtils.validateJWT(token);
+            JSON.toJSONString(checkResult);
+            if (checkResult.getSuccess()) {
+                return true;
+            }
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
         }
     }
 

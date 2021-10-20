@@ -349,5 +349,10 @@
 <script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
 <script th:src="@{/mall/js/index.js}" type="text/javascript"></script>
 <script th:src="@{/mall/js/search.js}" type="text/javascript"></script>
+<script>
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+</script>
 </body>
 </html>

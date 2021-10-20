@@ -23,5 +23,20 @@ public enum GameType {
     /**
      * 混合过关
      */
-    MIXED
+    MIXED,
+
+    /**
+     * 双色球
+     */
+    UNION_LOTTO,
+
+    /**
+     * 排列3
+     */
+    ARRANGE3,
+
+    /**
+     * 排列5
+     */
+    ARRANGE5
 }

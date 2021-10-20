@@ -87,6 +87,7 @@
             data: params,
             success: function (result) {
                 if (result.resultCode == 200) {
+                    sessionStorage.setItem("token", result.data);
                     window.location.href = '/index';
                 } else {
                     swal(result.message, {

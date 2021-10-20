@@ -38,7 +38,7 @@ public class ResultModel<T> {
         this.statusMes = statusMes;
     }
 
-    public Object getContent() {
+    public T getContent() {
         return content;
     }
 

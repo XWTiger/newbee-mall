@@ -8,4 +8,6 @@ import java.lang.annotation.*;
 public @interface ObjectScan {
 
     String value() default "";
+
+    boolean isArray() default false;
 }

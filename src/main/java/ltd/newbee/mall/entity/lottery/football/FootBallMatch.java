@@ -23,7 +23,7 @@ public class FootBallMatch  {
     @ApiModelProperty("客队编码")
     private String awayTeamCode;
 
-    @ApiModelProperty("匹配时间（周）： 周一001")
+    @ApiModelProperty("比赛时间（周）： 周一001")
     private String matchNumStr;
 
     @ApiModelProperty("星期： 周一")

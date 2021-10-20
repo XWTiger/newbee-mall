@@ -48,7 +48,7 @@
                             </a>
                         </li>
                         <li>
-                            <a th:href="@{/orders}">
+                            <a onclick="order()">
                                 我的订单
                             </a>
                         </li>
@@ -83,4 +83,9 @@
         </div>
     </div>
 </header>
+<script>
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+</script>
 </html>

@@ -8,6 +8,7 @@
  */
 package ltd.newbee.mall.controller.mall;
 
+import io.swagger.annotations.Api;
 import ltd.newbee.mall.common.Constants;
 import ltd.newbee.mall.common.NewBeeMallException;
 import ltd.newbee.mall.common.NewBeeMallOrderStatusEnum;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@Api(value = "订单", description = "体彩订单")
 public class OrderController {
 
     @Resource
@@ -149,6 +151,18 @@ public class OrderController {
     @GetMapping("/paySuccess")
     @ResponseBody
     public Result paySuccess(@RequestParam("orderNo") String orderNo, @RequestParam("payType") int payType) {
+        String payResult = newBeeMallOrderService.paySuccess(orderNo, payType);
+        if (ServiceResultEnum.SUCCESS.getResult().equals(payResult)) {
+            return ResultGenerator.genSuccessResult();
+        } else {
+            return ResultGenerator.genFailResult(payResult);
+        }
+    }
+
+    @PostMapping("/lottery-order")
+
+    @ResponseBody
+    public Result postLotteryOrder(@RequestParam("orderNo") String orderNo, @RequestParam("payType") int payType) {
         String payResult = newBeeMallOrderService.paySuccess(orderNo, payType);
         if (ServiceResultEnum.SUCCESS.getResult().equals(payResult)) {
             return ResultGenerator.genSuccessResult();

@@ -4,6 +4,9 @@ import ltd.newbee.mall.common.GameType;
 import ltd.newbee.mall.entity.common.PageCL;
 import ltd.newbee.mall.entity.lottery.LoterryPl5;
 import ltd.newbee.mall.entity.lottery.football.FootBallGames;
+import ltd.newbee.mall.entity.lottery.football.FootBallMatchResult;
+
+import java.util.List;
 
 /**
  * this is for lottery service， just request official api
@@ -26,5 +29,10 @@ public interface LotteryService {
 
 
     FootBallGames getVictoryOrDefeatFootBallGames(GameType gameType) throws Exception;
+
+
+    List<FootBallMatchResult> getFootballMatchResult(String matchBeginDate, String  matchEndDate, String leagueId, Integer pageSize, Integer pageNo) throws Exception;
+
+
 
 }

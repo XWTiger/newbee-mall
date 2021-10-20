@@ -19,11 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.util.MapUtils;
 import org.thymeleaf.util.StringUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
-
-import static ltd.newbee.mall.common.GameType.VICTORY;
 
 @Service
 @Slf4j
@@ -82,6 +79,23 @@ public class LotteryServiceImpl implements LotteryService {
         FootBallGames footBallGames = mapperToVictoryOrDefeatFootBallGames(responseEntity, matchIds);
         getSupportRate(matchIds);
         return footBallGames;
+    }
+
+    @Override
+    public List<FootBallMatchResult> getFootballMatchResult(String matchBeginDate, String matchEndDate, String leagueId, Integer pageSize, Integer pageNo) throws Exception {
+        String id = StringUtils.isEmpty(leagueId) ? "" : leagueId;
+        String url = lotteryUrl + "/jc/football/getMatchResultV1.qry?matchPage=1&matchBeginDate=" + matchBeginDate + "&matchEndDate=" + matchEndDate + "&leagueId= " + id + "&pageSize=" + pageSize+ "&pageNo=" + pageNo+ "&isFix=0&pcOrWap=1";
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), Object.class);
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            throw new Exception("竞彩接口请求失败");
+        }
+        JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(responseEntity.getBody()));
+        if (jsonObject.getBoolean("emptyFlag")) {
+            return Collections.EMPTY_LIST;
+        }
+
+        return getObject(FootBallMatchResult.class, jsonObject.getJSONObject("value"));
     }
 
     public  void  getSupportRate( Map<String, FootBallMatch> matchIds) {
@@ -235,6 +249,39 @@ public class LotteryServiceImpl implements LotteryService {
         ObjectScan objectScan = (ObjectScan) clz.getAnnotation(ObjectScan.class);
         String scanObj = objectScan.value();
         if (!StringUtils.isEmpty(scanObj)) {
+
+            //obj is array
+            if (objectScan.isArray()) {
+                List<Object> list = new ArrayList<>();
+                JSONArray jsonArray = jsonObject.getJSONArray(scanObj);
+
+                if (jsonArray.size() > 0) {
+
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        Object t =  clz.newInstance();
+                        Field[] fields = t.getClass().getDeclaredFields();
+
+                        for (Field field : fields) {
+                            //TODO more type to do
+                            field.setAccessible(true);
+                            if (field.getType().getName().equals("java.lang.String")) {
+                                field.set(t,  jsonArray.getJSONObject(i).getString(field.getName()));
+                            }
+                            if (field.getType().getName().equals("java.lang.Integer")) {
+                                field.set(t,  jsonArray.getJSONObject(i).getInteger(field.getName()));
+                            }
+                            if (field.getType().getName().equals("java.lang.Double")) {
+                                field.set(t,  jsonArray.getJSONObject(i).getDouble(field.getName()));
+                            }
+
+                        }
+
+                        list.add(t);
+                    }
+                    return (T) list;
+                }
+
+            }
             //csr
             JSONObject csrJsonObject = jsonObject.getJSONObject(scanObj);
             if (Objects.isNull(csrJsonObject) || csrJsonObject.size() <= 0) {
@@ -242,6 +289,7 @@ public class LotteryServiceImpl implements LotteryService {
             }
             T t = (T) clz.newInstance();
             Field[] fields = t.getClass().getDeclaredFields();
+
             for (Field field : fields) {
                 //TODO more type to do
                 field.setAccessible(true);
@@ -260,6 +308,41 @@ public class LotteryServiceImpl implements LotteryService {
         }
         return null;
     }
+
+   /* public List<?>  getObject(Class clz, JSONObject jsonObject) throws IllegalAccessException, InstantiationException {
+
+        //get object scan value to find destination  value
+        ObjectScan objectScan = (ObjectScan) clz.getAnnotation(ObjectScan.class);
+        String scanObj = objectScan.value();
+        if (!StringUtils.isEmpty(scanObj)) {
+            //csr
+            JSONObject csrJsonObject = jsonObject.getJSONObject(scanObj);
+            if (Objects.isNull(csrJsonObject) || csrJsonObject.size() <= 0) {
+                return null;
+            }
+
+            List<Object> list = new ArrayList<>();
+            Object t =  clz.newInstance();
+            Field[] fields = t.getClass().getDeclaredFields();
+
+            for (Field field : fields) {
+                //TODO more type to do
+                field.setAccessible(true);
+                if (field.getType().getName().equals("java.lang.String")) {
+                    field.set(t,  csrJsonObject.getString(field.getName()));
+                }
+                if (field.getType().getName().equals("java.lang.Integer")) {
+                    field.set(t,  csrJsonObject.getInteger(field.getName()));
+                }
+                if (field.getType().getName().equals("java.lang.Double")) {
+                    field.set(t,  csrJsonObject.getDouble(field.getName()));
+                }
+
+            }
+            return t;
+        }
+        return null;
+    }*/
 
     public List<Pool> getPool(JSONArray jsonArray) {
         if (jsonArray.size() <= 0) {
@@ -435,4 +518,6 @@ public class LotteryServiceImpl implements LotteryService {
         page.setList(list);
         return page;
     }
+
+
 }
