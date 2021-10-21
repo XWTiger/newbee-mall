@@ -9,30 +9,46 @@
 package ltd.newbee.mall.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+@AllArgsConstructor
+@Data
+@ApiModel("订单基础信息")
+@NoArgsConstructor
 public class NewBeeMallOrder {
     private Long orderId;
 
+    @ApiModelProperty(value = "订单号", hidden = true)
     private String orderNo;
 
+    @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("价格")
     private Integer totalPrice;
 
     private Byte payStatus;
 
+    @ApiModelProperty("支付方式， 3为欢乐豆支付")
     private Byte payType;
 
+    @ApiModelProperty("支付时间")
     private Date payTime;
 
+    @ApiModelProperty("订单状态")
     private Byte orderStatus;
 
     private String extraInfo;
 
     private String userAddress;
 
+    @ApiModelProperty(hidden = true)
     private Byte isDeleted;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

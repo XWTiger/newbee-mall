@@ -14,10 +14,7 @@ import ltd.newbee.mall.dao.NewBeeMallGoodsMapper;
 import ltd.newbee.mall.dao.NewBeeMallOrderItemMapper;
 import ltd.newbee.mall.dao.NewBeeMallOrderMapper;
 import ltd.newbee.mall.dao.NewBeeMallShoppingCartItemMapper;
-import ltd.newbee.mall.entity.NewBeeMallGoods;
-import ltd.newbee.mall.entity.NewBeeMallOrder;
-import ltd.newbee.mall.entity.NewBeeMallOrderItem;
-import ltd.newbee.mall.entity.StockNumDTO;
+import ltd.newbee.mall.entity.*;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.util.BeanUtil;
 import ltd.newbee.mall.util.NumberUtil;
@@ -401,6 +398,16 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
                 return newBeeMallOrderItemVOS;
             }
         }
+        return null;
+    }
+
+    /**
+     * 保存 竞彩 订单
+     * @param lotteryOrderVO
+     * @return
+     */
+    @Override
+    public String saveLotteryOrder(LotteryOrderVO lotteryOrderVO) {
         return null;
     }
 }

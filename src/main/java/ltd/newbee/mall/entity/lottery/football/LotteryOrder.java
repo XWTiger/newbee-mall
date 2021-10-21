@@ -1,13 +1,24 @@
 package ltd.newbee.mall.entity.lottery.football;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import ltd.newbee.mall.common.GameType;
 
+import java.util.List;
+
 @ApiModel("订单")
 @Data
+@TableName("lottery_order")
 public class LotteryOrder {
+
+
+    @TableId(type = IdType.UUID)
+    private String id;
 
     /**
      * 订单类型
@@ -43,6 +54,14 @@ public class LotteryOrder {
 
     @ApiModelProperty("倍数")
     private Integer times;
+
+
+    @TableField(exist = false)
+    private OddsOrder oddsOrder;
+
+
+    @TableField(exist = false)
+    private List<CrsOrder> crsOrders;
 
 
 

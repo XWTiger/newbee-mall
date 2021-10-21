@@ -9,13 +9,11 @@
 package ltd.newbee.mall.controller.mall;
 
 import io.swagger.annotations.Api;
-import ltd.newbee.mall.common.Constants;
-import ltd.newbee.mall.common.NewBeeMallException;
-import ltd.newbee.mall.common.NewBeeMallOrderStatusEnum;
-import ltd.newbee.mall.common.ServiceResultEnum;
+import ltd.newbee.mall.common.*;
 import ltd.newbee.mall.controller.vo.NewBeeMallOrderDetailVO;
 import ltd.newbee.mall.controller.vo.NewBeeMallShoppingCartItemVO;
 import ltd.newbee.mall.controller.vo.NewBeeMallUserVO;
+import ltd.newbee.mall.entity.LotteryOrderVO;
 import ltd.newbee.mall.entity.NewBeeMallOrder;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.service.NewBeeMallShoppingCartService;
@@ -159,16 +157,20 @@ public class OrderController {
         }
     }
 
+    /**
+     * 订单直接扣除欢乐豆， 没有支付流程
+     * @return
+     */
     @PostMapping("/lottery-order")
-
     @ResponseBody
-    public Result postLotteryOrder(@RequestParam("orderNo") String orderNo, @RequestParam("payType") int payType) {
-        String payResult = newBeeMallOrderService.paySuccess(orderNo, payType);
-        if (ServiceResultEnum.SUCCESS.getResult().equals(payResult)) {
-            return ResultGenerator.genSuccessResult();
-        } else {
-            return ResultGenerator.genFailResult(payResult);
+    public ResultModel postLotteryOrder(@RequestBody LotteryOrderVO lotteryOrderVO) {
+        ResultModel resultModel = new ResultModel();
+        try {
+            String result = newBeeMallOrderService.saveLotteryOrder(lotteryOrderVO);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return resultModel;
     }
 
 }
