@@ -1,10 +1,10 @@
 package ltd.newbee.mall.util;
 
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+
 import io.jsonwebtoken.*;
 import ltd.newbee.mall.common.Constants;
 import ltd.newbee.mall.entity.common.CheckResult;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -65,11 +65,7 @@ public class JwtUtils {
 
     public static SecretKey generalKey() {
         byte[] encodedKey = new byte[0];
-        try {
-            encodedKey = Base64.decode(Constants.JWT_SECERT);
-        } catch (Base64DecodingException e) {
-            System.out.println("base 64 error =================>");
-        }
+        encodedKey = Base64.decodeBase64(Constants.JWT_SECERT);
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
     }
