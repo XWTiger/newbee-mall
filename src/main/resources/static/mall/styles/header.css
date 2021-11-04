@@ -154,10 +154,10 @@
 }
 
 #nav .banner_x .logo {
-    width: 240px;
+    width: 189px;
     text-indent: -10000px;
     background: url(../image/login-logo-2.png) no-repeat;
-    background-size: 100%;
+    background-size: 84%;
     background-position: center;
     margin-top: 10px;
 }
