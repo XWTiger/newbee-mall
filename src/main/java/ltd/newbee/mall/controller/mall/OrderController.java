@@ -20,6 +20,7 @@ import ltd.newbee.mall.service.NewBeeMallShoppingCartService;
 import ltd.newbee.mall.util.PageQueryUtil;
 import ltd.newbee.mall.util.Result;
 import ltd.newbee.mall.util.ResultGenerator;
+import ltd.newbee.mall.util.SystemUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -167,7 +168,15 @@ public class OrderController {
         ResultModel resultModel = new ResultModel();
         try {
             String result = newBeeMallOrderService.saveLotteryOrder(lotteryOrderVO);
+            resultModel.setStatusMes("下单成功，马上通知店主下票");
+            resultModel.setContent(result);
         } catch (Exception e) {
+            resultModel.setStatusCode(0);
+            if (SystemUtil.isContainChinese(e.getMessage())) {
+                resultModel.setResouce(e.getMessage());
+            } else {
+                resultModel.setContent("支付订单失败");
+            }
             e.printStackTrace();
         }
         return resultModel;

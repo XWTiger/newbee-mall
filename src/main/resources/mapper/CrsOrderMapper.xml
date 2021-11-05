@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.CrsOrderMapper">
+    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.lottery.football.CrsOrder">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="lottery_order_id" jdbcType="VARCHAR" property="lotteryOrderId" />
+        <result column="core" jdbcType="VARCHAR" property="core" />
+        <result column="core_odds" jdbcType="DOUBLE" property="coreOdds" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, lottery_order_id, core, core_odds
+    </sql>
+
+    <insert id="insertList">
+        <foreach collection="list" item="item" separator=";">
+            insert into crs_order
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+                    id,
+                </if>
+                <if test="lotteryOrderId != null">
+                    lottery_order_id,
+                </if>
+                <if test="core != null">
+                    core,
+                </if>
+                <if test="coreOdds != null">
+                    core_odds,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+                    #{item.id,jdbcType=VARCHAR},
+                </if>
+                <if test="lotteryOrderId != null">
+                    #{item.lotteryOrderId,jdbcType=VARCHAR},
+                </if>
+                <if test="core != null">
+                    #{item.core,jdbcType=VARCHAR},
+                </if>
+                <if test="coreOdds != null">
+                    #{item.coreOdds,jdbcType=DOUBLE},
+                </if>
+
+            </trim>
+        </foreach>
+    </insert>
+
+
+</mapper>

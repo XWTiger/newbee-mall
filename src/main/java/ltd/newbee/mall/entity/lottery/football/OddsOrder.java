@@ -20,8 +20,6 @@ public class OddsOrder {
     @ApiModelProperty("主队让球情况 -1 被让 ， 空 不让球， 1 让一球")
     private String goalLine;
 
-    @ApiModelProperty("赔率")
-    private String odds;
 
     @ApiModelProperty("主胜")
     private Boolean homeWin;

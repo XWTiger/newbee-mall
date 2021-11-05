@@ -32,6 +32,8 @@ public class MallUser {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    private Integer relateAdminId;
+
     public Long getUserId() {
         return userId;
     }
@@ -104,6 +106,14 @@ public class MallUser {
         this.createTime = createTime;
     }
 
+    public Integer getRelateAdminId() {
+        return relateAdminId;
+    }
+
+    public void setRelateAdminId(Integer relateAdminId) {
+        this.relateAdminId = relateAdminId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -119,6 +129,7 @@ public class MallUser {
         sb.append(", isDeleted=").append(isDeleted);
         sb.append(", lockedFlag=").append(lockedFlag);
         sb.append(", createTime=").append(createTime);
+        sb.append(", relateAdminId=").append(relateAdminId);
         sb.append("]");
         return sb.toString();
     }

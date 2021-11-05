@@ -11,10 +11,11 @@
         <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
         <result column="locked_flag" jdbcType="TINYINT" property="lockedFlag"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="relate_admin_id" jdbcType="INTEGER" property="relateAdminId"/>
     </resultMap>
     <sql id="Base_Column_List">
     user_id, nick_name, login_name, password_md5, introduce_sign, address, is_deleted, 
-    locked_flag, create_time
+    locked_flag, create_time, relate_admin_id
   </sql>
 
     <select id="findMallUserList" parameterType="Map" resultMap="BaseResultMap">
@@ -64,11 +65,11 @@
     <insert id="insert" parameterType="ltd.newbee.mall.entity.MallUser">
     insert into tb_newbee_mall_user (user_id, nick_name, login_name, 
       password_md5, introduce_sign, address, 
-      is_deleted, locked_flag, create_time
+      is_deleted, locked_flag, create_time, relate_admin_id
       )
     values (#{userId,jdbcType=BIGINT}, #{nickName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, 
       #{passwordMd5,jdbcType=VARCHAR}, #{introduceSign,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
-      #{isDeleted,jdbcType=TINYINT}, #{lockedFlag,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}
+      #{isDeleted,jdbcType=TINYINT}, #{lockedFlag,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{relateAdminId,jdbcType=INTEGER}
       )
   </insert>
     <insert id="insertSelective" parameterType="ltd.newbee.mall.entity.MallUser">

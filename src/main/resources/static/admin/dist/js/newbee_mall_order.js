@@ -44,9 +44,14 @@ $(function () {
     });
 
     function operateFormatter(cellvalue, rowObject) {
-        return "<a href=\'##\' onclick=openOrderItems(" + rowObject.rowId + ")>查看订单信息</a>" +
+        var temp =  "<a href=\'##\' onclick=openOrderItems(" + rowObject.rowId + ")>查看订单信息</a>" +
             "<br>" +
             "<a href=\'##\' onclick=openExpressInfo(" + rowObject.rowId + ")>查看收件人信息</a>";
+        if (rowObject.colModel.formatter.arguments[2].orderType == 'LOTTERY')
+           temp = temp.concat( "<br>" +
+            "<a href=\'/lottery-order\'>查看彩票购买信息</a>");
+
+        return temp;
     }
 
     function orderStatusFormatter(cellvalue) {

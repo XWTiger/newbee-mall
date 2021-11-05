@@ -30,6 +30,7 @@ public class NewBeeMallOrder {
     @ApiModelProperty("用户id")
     private Long userId;
 
+
     @ApiModelProperty("价格")
     private Integer totalPrice;
 
@@ -55,6 +56,8 @@ public class NewBeeMallOrder {
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
+
+    private String orderType;
 
     public Long getOrderId() {
         return orderId;
@@ -160,6 +163,14 @@ public class NewBeeMallOrder {
         this.updateTime = updateTime;
     }
 
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -179,6 +190,7 @@ public class NewBeeMallOrder {
         sb.append(", isDeleted=").append(isDeleted);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", orderType=").append(orderType);
         sb.append("]");
         return sb.toString();
     }

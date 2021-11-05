@@ -8,13 +8,17 @@
  */
 package ltd.newbee.mall.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import ltd.newbee.mall.common.*;
 import ltd.newbee.mall.controller.vo.*;
-import ltd.newbee.mall.dao.NewBeeMallGoodsMapper;
-import ltd.newbee.mall.dao.NewBeeMallOrderItemMapper;
-import ltd.newbee.mall.dao.NewBeeMallOrderMapper;
-import ltd.newbee.mall.dao.NewBeeMallShoppingCartItemMapper;
+import ltd.newbee.mall.dao.*;
 import ltd.newbee.mall.entity.*;
+import ltd.newbee.mall.entity.common.Notice;
+import ltd.newbee.mall.entity.common.PageCL;
+import ltd.newbee.mall.entity.lottery.football.LotteryOrder;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.util.BeanUtil;
 import ltd.newbee.mall.util.NumberUtil;
@@ -43,6 +47,31 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
     private NewBeeMallShoppingCartItemMapper newBeeMallShoppingCartItemMapper;
     @Autowired
     private NewBeeMallGoodsMapper newBeeMallGoodsMapper;
+
+    @Autowired
+    private MallUserMapper mallUserMapper;
+
+    @Autowired
+    private OddsOrderMapper oddsOrderMapper;
+
+    @Autowired
+    private UserHappyNumMapper userHappyNumMapper;
+
+    @Autowired
+    private LotteryOrderMapper lotteryOrderMapper;
+
+    @Autowired
+    private CrsOrderMapper crsOrderMapper;
+
+    @Autowired
+    private HalfCourtOrderMapper halfCourtOrderMapper;
+
+    @Autowired
+    private TtgOrderMapper ttgOrderMapper;
+
+    @Autowired
+    private NoticeMapper noticeMapper;
+
 
     @Override
     public PageResult getNewBeeMallOrdersPage(PageQueryUtil pageUtil) {
@@ -403,11 +432,116 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
 
     /**
      * 保存 竞彩 订单
+     *
      * @param lotteryOrderVO
      * @return
      */
     @Override
-    public String saveLotteryOrder(LotteryOrderVO lotteryOrderVO) {
-        return null;
+    @Transactional(rollbackFor = Exception.class)
+    public String saveLotteryOrder(LotteryOrderVO lotteryOrderVO) throws Exception {
+
+        //生成 订单号
+        String orderNo = NumberUtil.genOrderNo();
+        lotteryOrderVO.setOrderNo(orderNo);
+        lotteryOrderVO.setOrderType("LOTTERY");
+        lotteryOrderVO.setIsDeleted((byte) 0);
+        //校验 用户是否存在
+        MallUser user = mallUserMapper.selectByPrimaryKey(lotteryOrderVO.getUserId());
+        if (Objects.isNull(user)) {
+            throw new Exception("用户不存在");
+        }
+        //TODO 校验价格
+        //校验订单 至少要买一种
+
+        //订单（基础）
+        newBeeMallOrderMapper.insert(lotteryOrderVO);
+        //一对多
+        //彩票订单
+        if (!CollectionUtils.isEmpty(lotteryOrderVO.getLotteryOrders())) {
+            lotteryOrderVO.getLotteryOrders().forEach(lotteryOrder -> {
+                lotteryOrder.setId(UUID.randomUUID().toString());
+                lotteryOrder.setOrderDate(new Date());
+                lotteryOrder.setOrderNo(orderNo);
+            });
+            lotteryOrderMapper.insertList(lotteryOrderVO.getLotteryOrders());
+            lotteryOrderVO.getLotteryOrders().forEach(lotteryOrder -> {
+                //一对一
+                //胜负平（让）
+                if (Objects.nonNull(lotteryOrder.getOddsOrder())) {
+                    lotteryOrder.getOddsOrder().setLotteryOrderId(lotteryOrder.getId());
+                    lotteryOrder.getOddsOrder().setId(UUID.randomUUID().toString());
+                    oddsOrderMapper.insert(lotteryOrder.getOddsOrder());
+                }
+                //总进球
+                if (!CollectionUtils.isEmpty(lotteryOrder.getTtgOrders())) {
+                    lotteryOrder.getTtgOrders().forEach(ttgOrder -> {
+                        ttgOrder.setId(UUID.randomUUID().toString());
+                        ttgOrder.setLotteryOrderId(lotteryOrder.getId());
+                    });
+                    ttgOrderMapper.insertList(lotteryOrder.getTtgOrders());
+                }
+                //半全场
+                if (!CollectionUtils.isEmpty(lotteryOrder.getHalfCourtOrders())) {
+                    lotteryOrder.getHalfCourtOrders().forEach(ele -> {
+                        ele.setId(UUID.randomUUID().toString());
+                        ele.setLotteryOrderId(lotteryOrder.getId());
+                    });
+                    halfCourtOrderMapper.insertList(lotteryOrder.getHalfCourtOrders());
+                }
+                //比分
+                if (!CollectionUtils.isEmpty(lotteryOrder.getCrsOrders())) {
+                    lotteryOrder.getCrsOrders().forEach(ele -> {
+                        ele.setId(UUID.randomUUID().toString());
+                        ele.setLotteryOrderId(lotteryOrder.getId());
+                    });
+                    crsOrderMapper.insertList(lotteryOrder.getCrsOrders());
+                }
+            });
+        }
+
+        //订单生成完成，通知管理员（店主） 打票
+        Notice notice = new Notice();
+        notice.setNoticeContent("用户: " + user.getLoginName() + ", 已经下单");
+        notice.setRelate_id(user.getUserId());
+        notice.setType((byte) 1);
+        noticeMapper.insert(notice);
+
+        user.getRelateAdminId();
+        // 扣除用户欢乐豆, 扣除管理员积分在上传图片时。
+        UserHappyNum userHappyNum = userHappyNumMapper.selectOne(new QueryWrapper<UserHappyNum>().lambda().eq(UserHappyNum::getRelateId, user.getUserId()).select());
+        if (Objects.isNull(userHappyNum) || userHappyNum.getHappyNum() <= 0) {
+            throw new Exception("欢乐豆不足， 请联系管理员！");
+        }
+        userHappyNum.setHappyNum(userHappyNum.getHappyNum() - lotteryOrderVO.getTotalPrice());
+        userHappyNumMapper.updateById(userHappyNum);
+
+        return orderNo;
+    }
+
+    @Override
+    public LotteryOrder getLotteryOrderByOrderNO(String orderNo) {
+        return lotteryOrderMapper.selectOne(new QueryWrapper<LotteryOrder>().eq("order_no", orderNo));
+    }
+
+    @Override
+    public PageCL<LotteryOrder> getLotteryOrder(int pageNo, int pageSize, Date start, Date end) {
+        PageHelper.startPage(pageNo, pageSize);
+        QueryWrapper queryWrapper = new QueryWrapper<LotteryOrder>();
+        if (Objects.nonNull(start) && Objects.nonNull(end)) {
+            queryWrapper.lambda().between(true, "order_date", start, end);
+        } else {
+            queryWrapper.select();
+        }
+        List<LotteryOrder> list = lotteryOrderMapper.selectList(queryWrapper);
+
+        PageCL<LotteryOrder> pageInfo = new PageCL<>();
+        PageInfo<LotteryOrder> dbInfo = new PageInfo<>(list);
+        pageInfo.setPageCount(dbInfo.getPages());
+        pageInfo.setTotal(Integer.parseInt(String.valueOf(dbInfo.getTotal())));
+        pageInfo.setPageNum(pageNo);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setSize(pageSize);
+        pageInfo.setList(dbInfo.getList());
+        return pageInfo;
     }
 }

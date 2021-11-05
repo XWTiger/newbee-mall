@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.LotteryOrderMapper">
+    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.lottery.football.LotteryOrder">
+        <id column="id" jdbcType="VARCHAR" property="id" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="numbers" jdbcType="VARCHAR" property="numbers" />
+        <result column="home_team_code" jdbcType="VARCHAR" property="homeTeamCode" />
+        <result column="home_team_abb_name" jdbcType="VARCHAR" property="homeTeamAbbName" />
+        <result column="away_team_code" jdbcType="VARCHAR" property="awayTeamCode" />
+        <result column="away_team_abb_name" jdbcType="VARCHAR" property="awayTeamAbbName" />
+        <result column="match_num_str" jdbcType="VARCHAR" property="matchNumStr" />
+        <result column="league_id" jdbcType="INTEGER" property="leagueId" />
+        <result column="times" jdbcType="VARCHAR" property="times" />
+        <result column="rule" jdbcType="VARCHAR" property="rule" />
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, order_no, type, numbers, home_team_code,home_team_abb_name, away_team_code, away_team_abb_name,
+        match_num_str,league_id,times,rule,order_date
+    </sql>
+    
+    <insert id="insertList" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            insert into lottery_order
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    id,
+                </if>
+                <if test="item.orderNo != null">
+                    order_no,
+                </if>
+                <if test="item.type != null">
+                    type,
+                </if>
+                <if test="item.numbers != null">
+                    numbers,
+                </if>
+                <if test="item.homeTeamCode != null">
+                    home_team_code,
+                </if>
+                <if test="item.homeTeamAbbName != null">
+                    home_team_abb_name,
+                </if>
+                <if test="item.awayTeamCode != null">
+                    away_team_code,
+                </if>
+                <if test="item.awayTeamAbbName != null">
+                    away_team_abb_name,
+                </if>
+                <if test="item.matchNumStr != null">
+                    match_num_str,
+                </if>
+                <if test="item.leagueId != null">
+                    league_id,
+                </if>
+                <if test="item.times != null">
+                    times,
+                </if>
+                <if test="item.rule != null">
+                    rule,
+                </if>
+                <if test="order_date != null">
+                    order_date,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    #{item.id,jdbcType=VARCHAR},
+                </if>
+                <if test="item.orderNo != null">
+                    #{item.orderNo,jdbcType=VARCHAR},
+                </if>
+                <if test="item.type != null">
+                    #{item.type,jdbcType=VARCHAR},
+                </if>
+                <if test="item.numbers != null">
+                    #{item.numbers,jdbcType=VARCHAR},
+                </if>
+                <if test="item.homeTeamCode != null">
+                    #{item.homeTeamCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.homeTeamAbbName != null">
+                    #{item.homeTeamAbbName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.awayTeamCode != null">
+                    #{item.awayTeamCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.awayTeamAbbName != null">
+                    #{item.awayTeamAbbName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.matchNumStr != null">
+                    #{item.matchNumStr,jdbcType=VARCHAR},
+
+                </if>
+                <if test="item.leagueId != null">
+                    #{item.leagueId,jdbcType=INTEGER},
+                </if>
+                <if test="item.times != null">
+                    #{item.times,jdbcType=INTEGER},
+                </if>
+                <if test="item.rule != null">
+                    #{item.rule,jdbcType=VARCHAR},
+                </if>
+
+                <if test="item.orderDate != null">
+                    #{item.orderDate,jdbcType=VARCHAR},
+                </if>
+
+            </trim>
+        </foreach>
+    </insert>
+
+
+</mapper>

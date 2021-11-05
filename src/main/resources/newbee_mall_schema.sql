@@ -1002,9 +1002,9 @@ CREATE TABLE `tb_newbee_mall_user`  (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户主键id',
   `nick_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '用户昵称',
   `login_name` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '登陆名称(默认为手机号)',
-  `password_md5` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'MD5加密后的密码',
-  `introduce_sign` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '个性签名',
-  `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '收货地址',
+  `password_md5` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT 'MD5加密后的密码',
+  `introduce_sign` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT '' COMMENT '个性签名',
+  `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT '' COMMENT '收货地址',
   `is_deleted` tinyint(4) NOT NULL DEFAULT 0 COMMENT '注销标识字段(0-正常 1-已注销)',
   `locked_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '锁定标识字段(0-未锁定 1-已锁定)',
   `create_time` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
@@ -1022,3 +1022,127 @@ INSERT INTO `tb_newbee_mall_user` VALUES (1, '十三', '13700002703', 'e10adc394
 INSERT INTO `tb_newbee_mall_user` VALUES (6, '测试用户1', '13711113333', 'dda01dc6d334badcd031102be6bee182', '测试用户1', '上海浦东新区XX路XX号 999 137xxxx7797', 0, 0, '2019-08-29 10:51:39');
 INSERT INTO `tb_newbee_mall_user` VALUES (7, '测试用户2测试用户2测试用户2测试用户2', '13811113333', 'dda01dc6d334badcd031102be6bee182', '测试用户2', '杭州市西湖区xx小区x幢419 十三 137xxxx2703', 0, 0, '2019-08-29 10:55:08');
 INSERT INTO `tb_newbee_mall_user` VALUES (8, '测试用户3', '13911113333', 'dda01dc6d334badcd031102be6bee182', '测试用户3', '杭州市西湖区xx小区x幢419 十三 137xxxx2703', 0, 0, '2019-08-29 10:55:16');
+
+
+
+CREATE TABLE `crs_order` IF NOT EXISTS (
+    `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `core` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '比分',
+    `core_odds` double NULL DEFAULT NULL COMMENT '赔率',
+    PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for half_court_order
+-- ----------------------------
+
+CREATE TABLE `half_court_order` IF NOT EXISTS  (
+    `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `detail` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '半全场： 胜w， 平d 负l； ww（胜胜） ， wd (胜平)， dl(平负) ， ll(负负), 类推',
+    `detail_odds` double NULL DEFAULT NULL COMMENT '赔率',
+    PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for lottery_order
+-- ----------------------------
+
+CREATE TABLE `lottery_order` IF NOT EXISTS  (
+    `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `order_no` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单号',
+    `type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `numbers` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '排列3 排列5 大乐透 七星彩',
+    `home_team_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主队编码',
+    `home_team_abb_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主队简称',
+    `away_team_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客队编码',
+    `away_team_abb_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '客队简称',
+    `match_num_str` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '比赛时间（周）： 周一001',
+    `league_id` int NULL DEFAULT NULL COMMENT '联赛编号',
+    `times` int NULL DEFAULT NULL COMMENT '倍数',
+    `rule` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '玩法 比如：3串1 ',
+    PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for total_goal
+-- ----------------------------
+
+CREATE TABLE `total_goal` IF NOT EXISTS  (
+    `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `goal` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '进球数',
+    `goal_odds` double NULL DEFAULT NULL COMMENT '赔率',
+    PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for win_defeat_order
+-- ----------------------------
+
+CREATE TABLE `win_defeat_order` IF NOT EXISTS  (
+    `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `goal_line` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主队让球情况 -1 被让 ， 空 不让球， 1 让一球',
+    `home_win` tinyint(2) UNSIGNED ZEROFILL NULL DEFAULT NULL COMMENT '1 选择主胜 ',
+    `home_win_odds` double NULL DEFAULT NULL COMMENT '主胜赔率',
+    `home_draw` tinyint NULL DEFAULT NULL COMMENT '平',
+    `home_draw_odds` double NULL DEFAULT NULL COMMENT '平赔率',
+    `visiting_win` tinyint NULL DEFAULT NULL COMMENT '客胜',
+    `visiting_win_odds` double NULL DEFAULT NULL COMMENT '客胜赔率',
+    `match_num_str` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '比赛日期',
+    `count` int NULL DEFAULT NULL COMMENT '本场共买数， 最多3 最少0',
+    PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+
+ALTER TABLE `newbee_mall_db`.`tb_newbee_mall_user`
+    ADD COLUMN `relate_admin_id` bigint NULL COMMENT '关联店主id' AFTER `create_time`;
+ALTER TABLE `newbee_mall_db`.`lottery_order`
+    ADD COLUMN `uploaded_img` tinyint NULL COMMENT '0 未上传票单， 1 已经上传票单' AFTER `rule`;
+
+
+CREATE TABLE `admin_integral` IF NOT EXISTS  (
+                                   `id` int NOT NULL AUTO_INCREMENT,
+                                   `admin_user_id` bigint NULL DEFAULT NULL COMMENT '管理员id',
+                                   `integral` bigint NULL DEFAULT NULL COMMENT '积分',
+                                   `comment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注（可以当着扩展字段）',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for img_order
+-- ----------------------------
+
+CREATE TABLE `img_order` IF NOT EXISTS   (
+                              `id` bigint NOT NULL AUTO_INCREMENT,
+                              `img_address` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图片地址',
+                              `deleted` tinyint NULL DEFAULT NULL COMMENT '0 未删除 1删除',
+                              `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '彩票订单id',
+                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for notice
+-- ----------------------------
+
+CREATE TABLE `notice`  IF NOT EXISTS (
+                           `id` bigint NOT NULL AUTO_INCREMENT,
+                           `notice_content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '通知内容',
+                           `type` tinyint NULL DEFAULT NULL COMMENT '0 普通用户 1 管理员',
+                           `already_read` tinyint NULL DEFAULT NULL COMMENT '0 未读 1 已读',
+                           `relate_id` bigint NULL DEFAULT NULL COMMENT '关联用户id',
+                           PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_happy_value
+-- ----------------------------
+
+CREATE TABLE `user_happy_value` IF NOT EXISTS  (
+                                     `id` int NOT NULL AUTO_INCREMENT,
+                                     `happy_num` int NULL DEFAULT NULL COMMENT '欢乐豆',
+                                     `relate_id` bigint NULL DEFAULT NULL COMMENT '关联普通用户id',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;

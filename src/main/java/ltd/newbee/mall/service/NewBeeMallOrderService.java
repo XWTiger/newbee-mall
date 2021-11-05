@@ -14,9 +14,12 @@ import ltd.newbee.mall.controller.vo.NewBeeMallShoppingCartItemVO;
 import ltd.newbee.mall.controller.vo.NewBeeMallUserVO;
 import ltd.newbee.mall.entity.LotteryOrderVO;
 import ltd.newbee.mall.entity.NewBeeMallOrder;
+import ltd.newbee.mall.entity.common.PageCL;
+import ltd.newbee.mall.entity.lottery.football.LotteryOrder;
 import ltd.newbee.mall.util.PageQueryUtil;
 import ltd.newbee.mall.util.PageResult;
 
+import java.util.Date;
 import java.util.List;
 
 public interface NewBeeMallOrderService {
@@ -114,7 +117,11 @@ public interface NewBeeMallOrderService {
 
     String paySuccess(String orderNo, int payType);
 
-    String saveLotteryOrder(LotteryOrderVO lotteryOrderVO);
+    String saveLotteryOrder(LotteryOrderVO lotteryOrderVO) throws Exception;
+
+    LotteryOrder getLotteryOrderByOrderNO(String orderNo);
+
+    PageCL<LotteryOrder> getLotteryOrder(int pageNo, int pageSize, Date start, Date end);
 
     List<NewBeeMallOrderItemVO> getOrderItems(Long id);
 }
