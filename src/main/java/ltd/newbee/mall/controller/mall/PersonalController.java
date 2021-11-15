@@ -84,7 +84,7 @@ public class PersonalController {
             //删除session中的verifyCode
             httpSession.removeAttribute(Constants.MALL_VERIFY_CODE_KEY);
             Result result =  ResultGenerator.genSuccessResult();
-            String token = JwtUtils.createJWT(loginName, "test", 30000);
+            String token = JwtUtils.createJWT(loginName, "test", 300000);
             System.out.println(token);
             result.setData(token);
             return result;
@@ -98,6 +98,7 @@ public class PersonalController {
     public Result register(@RequestParam("loginName") String loginName,
                            @RequestParam("verifyCode") String verifyCode,
                            @RequestParam("password") String password,
+                           @RequestParam(value = "shopId", required = false) Integer userId,
                            HttpSession httpSession) {
         if (StringUtils.isEmpty(loginName)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_NULL.getResult());
@@ -112,7 +113,7 @@ public class PersonalController {
         if (StringUtils.isEmpty(kaptchaCode) || !verifyCode.toLowerCase().equals(kaptchaCode)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_VERIFY_CODE_ERROR.getResult());
         }
-        String registerResult = newBeeMallUserService.register(loginName, password);
+        String registerResult = newBeeMallUserService.register(loginName, password, userId);
         //注册成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(registerResult)) {
             //删除session中的verifyCode

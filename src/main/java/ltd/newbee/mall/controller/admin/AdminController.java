@@ -8,8 +8,10 @@
  */
 package ltd.newbee.mall.controller.admin;
 
+import ltd.newbee.mall.common.ResultModel;
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.entity.AdminUser;
+import ltd.newbee.mall.entity.common.Notice;
 import ltd.newbee.mall.service.AdminUserService;
 
 import org.springframework.stereotype.Controller;
@@ -134,5 +136,24 @@ public class AdminController {
         request.getSession().removeAttribute("loginUser");
         request.getSession().removeAttribute("errorMsg");
         return "admin/login";
+    }
+
+    @PostMapping("/notice/user")
+    @ResponseBody
+    public ResultModel noticeUser(@RequestBody Notice notice) {
+
+        return null;
+    }
+
+    @PostMapping("/notice/user/read")
+    @ResponseBody
+    public ResultModel read(@RequestBody Notice notice) {
+
+        return null;
+    }
+
+    public ResultModel getNoticeByUserId() {
+
+        return null;
     }
 }

@@ -11,14 +11,15 @@
 
 <!-- personal -->
 <div id="personal">
+
     <div class="self-info center">
 
         <!-- sidebar -->
         <div th:replace="mall/personal-sidebar::sidebar-fragment"></div>
 
         <div class="intro fr">
-            <div class="grzlbt ml40">我的资料 <a href="javascript:openUpdateModal();"
-                                             style="color:#1baeae;margin-left: 600px;">更改个人信息</a>
+            <div class="grzlbt ml40">我的资料
+                <button type="button"  th:onclick="openUpdateModal()" class="btn-info ml-10">修改个人资料</button>
             </div>
             <div class="info_item ml40"><span>昵称</span><span
                     th:text="${session.newBeeMallUser.nickName}">newbee-mall</span>
@@ -146,6 +147,14 @@
             }
         });
     });
+
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+    function personal() {
+        window.location.href = "/personal?token=" + sessionStorage.getItem("token");
+    }
+
 </script>
 </body>
 </html>

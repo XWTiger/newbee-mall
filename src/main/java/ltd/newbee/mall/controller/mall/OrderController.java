@@ -15,6 +15,7 @@ import ltd.newbee.mall.controller.vo.NewBeeMallShoppingCartItemVO;
 import ltd.newbee.mall.controller.vo.NewBeeMallUserVO;
 import ltd.newbee.mall.entity.LotteryOrderVO;
 import ltd.newbee.mall.entity.NewBeeMallOrder;
+import ltd.newbee.mall.entity.lottery.football.LotteryOrder;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.service.NewBeeMallShoppingCartService;
 import ltd.newbee.mall.util.PageQueryUtil;
@@ -181,5 +182,7 @@ public class OrderController {
         }
         return resultModel;
     }
+
+
 
 }

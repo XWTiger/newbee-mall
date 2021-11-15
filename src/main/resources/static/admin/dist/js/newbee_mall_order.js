@@ -49,7 +49,7 @@ $(function () {
             "<a href=\'##\' onclick=openExpressInfo(" + rowObject.rowId + ")>查看收件人信息</a>";
         if (rowObject.colModel.formatter.arguments[2].orderType == 'LOTTERY')
            temp = temp.concat( "<br>" +
-            "<a href=\'/lottery-order\'>查看彩票购买信息</a>");
+            "<a href=\'/admin/lottery-order?orderNo="+ rowObject.colModel.formatter.arguments[2].orderNo +" \'>查看彩票购买信息</a>");
 
         return temp;
     }

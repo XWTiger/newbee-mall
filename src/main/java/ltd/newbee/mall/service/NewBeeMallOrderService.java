@@ -119,7 +119,7 @@ public interface NewBeeMallOrderService {
 
     String saveLotteryOrder(LotteryOrderVO lotteryOrderVO) throws Exception;
 
-    LotteryOrder getLotteryOrderByOrderNO(String orderNo);
+    LotteryOrderVO getLotteryOrderByOrderNO(String orderNo);
 
     PageCL<LotteryOrder> getLotteryOrder(int pageNo, int pageSize, Date start, Date end);
 

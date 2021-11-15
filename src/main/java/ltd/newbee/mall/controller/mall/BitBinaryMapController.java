@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ltd.newbee.mall.common.ResultModel;
 import ltd.newbee.mall.util.QRCodeUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +27,14 @@ import java.io.OutputStream;
 @Slf4j
 public class BitBinaryMapController {
 
+    @Value("${business.host.address}")
+    private String baseUrl;
+
     @GetMapping("user-app")
-    @ApiOperation("获取排列五历史列表")
+    @ApiOperation("获取二维码")
     @ResponseBody
     public ResultModel getUserBitBinMap(@RequestParam("shop_id") String shopId, HttpServletResponse response) {
-        String url = "http://192.168.5.159:28089//bit-binary-map/test?shop_id=" + shopId;
+        String url = "http://" + baseUrl + "/bit-binary-map/registry?shop_id=" + shopId;
         String imgLogo = "E:\\opt\\log.jpg";
         String dePath = "E:\\opt\\";
         try {
@@ -67,11 +72,11 @@ public class BitBinaryMapController {
         return new ResultModel();
     }
 
-    @GetMapping("test")
-    @ApiOperation("获取排列五历史列表")
-    @ResponseBody
-    public ResultModel getTest() {
-        System.out.println("=======================================");
-        return new ResultModel();
+    @GetMapping("registry")
+    @ApiOperation("注册用户")
+    public String registry(@RequestParam("shop_id") Integer shopId, HttpServletRequest request) {
+        System.out.println("===============new user registry================");
+        request.setAttribute("shopId", shopId);
+        return "mall/register";
     }
 }

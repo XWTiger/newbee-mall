@@ -38,7 +38,7 @@
                 <div class="user">
                     <ul class="selector">
                         <li>
-                            <a th:href="@{/personal}">
+                            <a onclick="personal()">
                                 个人中心
                             </a>
                         </li>
@@ -81,6 +81,9 @@
 <script>
     function order() {
         window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+    function personal() {
+        window.location.href = "/personal?token=" + sessionStorage.getItem("token");
     }
 </script>
 </html>

@@ -181,6 +181,13 @@
 <script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
 <script th:src="@{/mall/js/bootstrap3.js}"></script>
 <script type="text/javascript">
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+    function personal() {
+        window.location.href = "/personal?token=" + sessionStorage.getItem("token");
+    }
+
     $('#saveOrder').click(function () {
         var userAddress = $(".user_address_label").html();
         if (userAddress == '' || userAddress == '无') {

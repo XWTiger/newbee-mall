@@ -10,6 +10,8 @@ package ltd.newbee.mall.controller.common;
 
 import ltd.newbee.mall.common.Constants;
 import ltd.newbee.mall.dao.ImgOrderMapper;
+import ltd.newbee.mall.dao.NewBeeMallOrderMapper;
+import ltd.newbee.mall.entity.NewBeeMallOrder;
 import ltd.newbee.mall.entity.common.ImgOrder;
 import ltd.newbee.mall.util.NewBeeMallUtils;
 import ltd.newbee.mall.util.Result;
@@ -17,6 +19,7 @@ import ltd.newbee.mall.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +52,9 @@ public class UploadController {
     private StandardServletMultipartResolver standardServletMultipartResolver;
     @Autowired
     private ImgOrderMapper imgOrderMapper;
+
+    @Autowired
+    private NewBeeMallOrderMapper newBeeMallOrderMapper;
 
     @Value("${business.img.url.preffix}")
     private String  imgUrlPreffix;
@@ -85,6 +91,7 @@ public class UploadController {
 
     @PostMapping({"/upload/files"})
     @ResponseBody
+    @Transactional
     public Result uploadV2(HttpServletRequest httpServletRequest) throws URISyntaxException {
         List<MultipartFile> multipartFiles = new ArrayList<>(20);
         if (standardServletMultipartResolver.isMultipart(httpServletRequest)) {
@@ -103,8 +110,8 @@ public class UploadController {
         if (CollectionUtils.isEmpty(multipartFiles)) {
             return ResultGenerator.genFailResult("参数异常");
         }
-        if (multipartFiles != null && multipartFiles.size() > 5) {
-            return ResultGenerator.genFailResult("最多上传5张图片");
+        if (multipartFiles != null && multipartFiles.size() > 18) {
+            return ResultGenerator.genFailResult("最多上传18张图片");
         }
         List<String> fileNames = new ArrayList(multipartFiles.size());
         for (int i = 0; i < multipartFiles.size(); i++) {
@@ -121,6 +128,11 @@ public class UploadController {
                 ImgOrder imgOrder = new ImgOrder(null, imgUrlPreffix + newFileName, (byte) 0,
                         httpServletRequest.getParameter("lotteryOrderId"));
                 imgOrderMapper.insert(imgOrder);
+                NewBeeMallOrder newBeeMallOrder = new NewBeeMallOrder();
+                NewBeeMallOrder newBeeMallOrder1 = newBeeMallOrderMapper.selectByOrderNo(httpServletRequest.getParameter("lotteryOrderId"));
+                newBeeMallOrder.setOrderId(newBeeMallOrder1.getOrderId());
+                newBeeMallOrder.setUploadedImg((byte) 1);
+                newBeeMallOrderMapper.updateByPrimaryKeySelective(newBeeMallOrder);
             }
             File fileDirectory = new File(Constants.FILE_UPLOAD_DIC);
             //创建文件

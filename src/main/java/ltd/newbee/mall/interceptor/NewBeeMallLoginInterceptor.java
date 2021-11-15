@@ -34,14 +34,17 @@ public class NewBeeMallLoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         if (null == request.getSession().getAttribute(Constants.MALL_USER_SESSION_KEY)) {
             response.sendRedirect(request.getContextPath() + "/login");
+            System.out.println("session is null ===========================");
             return false;
         } else {
             String token = request.getParameter("token");
             CheckResult checkResult = JwtUtils.validateJWT(token);
+            System.out.println("token" + token);
             JSON.toJSONString(checkResult);
             if (checkResult.getSuccess()) {
                 return true;
             }
+            System.out.println("jwt error ===========================");
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         }

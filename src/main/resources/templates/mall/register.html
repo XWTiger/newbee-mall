@@ -3,16 +3,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>NewBee商城-注册</title>
-    <link rel="stylesheet" th:href="@{mall/css/common.css}">
-    <link rel="stylesheet" th:href="@{mall/styles/login.css}">
-    <link rel="stylesheet" th:href="@{mall/styles/header.css}">
+    <title>帮帮商城-注册</title>
+    <link rel="stylesheet" th:href="@{/mall/css/common.css}">
+    <link rel="stylesheet" th:href="@{/mall/styles/login.css}">
+    <link rel="stylesheet" th:href="@{/mall/styles/header.css}">
     <link rel="stylesheet" th:href="@{/admin/plugins/sweetalert/sweetalert.css}"/>
 </head>
 <body>
 <div class="top center">
     <div class="logo center">
-        <a href="./index.html" target="_blank"><img src="mall/image/login-logo-2.png" alt=""></a>
+        <a href="./index.html" target="_blank"><img src="/mall/image/login-logo-2.png" alt=""></a>
     </div>
 </div>
 
@@ -25,7 +25,7 @@
                 <div class="clear"></div>
                 <div class="under-line center"></div>
             </div>
-            <form id="registerForm" onsubmit="return false;" action="##">
+            <form   id="registerForm" onsubmit="return false;" action="##">
                 <div class="login_main center">
                     <div class="login-info">手机号:&nbsp;<input class="login-info-input" type="text" name="loginName"
                                                              placeholder="请输入你的手机号" id="loginName"/>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="login_submit">
-                    <input class="submit" type="button" onclick="register()" value="立即注册">
+                    <input class="submit" type="button" th:onclick="'javascript:register('+${shopId}+');'" value="立即注册">
                 </div>
             </form>
         </div>
@@ -58,8 +58,9 @@
 <script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
 <script type="text/javascript">
 
+    //TODO 后期需要RSA 加密密码。
     //注册按钮onclick事件改为register()即可
-    function register() {
+    function register(shopId) {
         var loginName = $("#loginName").val();
         if (!validPhoneNumber(loginName)) {
             swal('请输入正确的登录名(即手机号)', {
@@ -81,8 +82,12 @@
             });
             return false;
         }
+
+        console.log("==========》" + shopId);
         //验证
-        var params = $("#registerForm").serialize();
+        var params = $("#registerForm").serialize() + '&shopId=' + shopId;
+
+
         var url = '/register';
         $.ajax({
             type: 'POST',//方法类型

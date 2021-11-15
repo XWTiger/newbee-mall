@@ -36,7 +36,7 @@ public class LotteryOrder {
     /**
      * 包括 排列3 排列5 大乐透 七星彩
      */
-    @ApiModelProperty("排列3 排列5 大乐透 七星彩")
+    @ApiModelProperty("排列3 排列5 大乐透 七星彩 eg: 2 3 7| 09 08 22 23 25 32")
     private String numbers;
 
     @ApiModelProperty("主队编码")
@@ -57,7 +57,8 @@ public class LotteryOrder {
     @ApiModelProperty("联赛编号， eg： 100")
     private Integer leagueId;
 
-
+    @ApiModelProperty("联赛名称")
+    private String leagueName;
 
 
     @ApiModelProperty("倍数")
@@ -66,14 +67,15 @@ public class LotteryOrder {
     @ApiModelProperty("玩法： 比如 3串1(3v1)")
     private String rule;
 
-    private Byte uploadedImg;
 
+
+    @ApiModelProperty("比赛日期")
     private Date orderDate;
 
 
     @ApiModelProperty("胜负平/让 胜平负")
     @TableField(exist = false)
-    private OddsOrder oddsOrder;
+    private List<OddsOrder> oddsOrders;
 
 
     @ApiModelProperty("比分")

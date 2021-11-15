@@ -278,6 +278,13 @@
         });
     }
 
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+    function personal() {
+        window.location.href = "/personal?token=" + sessionStorage.getItem("token");
+    }
+
 </script>
 </body>
 </html>

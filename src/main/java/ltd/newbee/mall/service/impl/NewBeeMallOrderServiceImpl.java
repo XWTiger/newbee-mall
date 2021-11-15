@@ -8,7 +8,6 @@
  */
 package ltd.newbee.mall.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -16,14 +15,16 @@ import ltd.newbee.mall.common.*;
 import ltd.newbee.mall.controller.vo.*;
 import ltd.newbee.mall.dao.*;
 import ltd.newbee.mall.entity.*;
+import ltd.newbee.mall.entity.common.ImgOrder;
 import ltd.newbee.mall.entity.common.Notice;
 import ltd.newbee.mall.entity.common.PageCL;
-import ltd.newbee.mall.entity.lottery.football.LotteryOrder;
+import ltd.newbee.mall.entity.lottery.football.*;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.util.BeanUtil;
 import ltd.newbee.mall.util.NumberUtil;
 import ltd.newbee.mall.util.PageQueryUtil;
 import ltd.newbee.mall.util.PageResult;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +72,9 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
 
     @Autowired
     private NoticeMapper noticeMapper;
+
+    @Autowired
+    private ImgOrderMapper imgOrderMapper;
 
 
     @Override
@@ -460,17 +464,20 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
         if (!CollectionUtils.isEmpty(lotteryOrderVO.getLotteryOrders())) {
             lotteryOrderVO.getLotteryOrders().forEach(lotteryOrder -> {
                 lotteryOrder.setId(UUID.randomUUID().toString());
-                lotteryOrder.setOrderDate(new Date());
+              /*  lotteryOrder.setOrderDate(new Date());*/
                 lotteryOrder.setOrderNo(orderNo);
             });
             lotteryOrderMapper.insertList(lotteryOrderVO.getLotteryOrders());
             lotteryOrderVO.getLotteryOrders().forEach(lotteryOrder -> {
                 //一对一
                 //胜负平（让）
-                if (Objects.nonNull(lotteryOrder.getOddsOrder())) {
-                    lotteryOrder.getOddsOrder().setLotteryOrderId(lotteryOrder.getId());
-                    lotteryOrder.getOddsOrder().setId(UUID.randomUUID().toString());
-                    oddsOrderMapper.insert(lotteryOrder.getOddsOrder());
+                if (!CollectionUtils.isEmpty(lotteryOrder.getOddsOrders())) {
+                    lotteryOrder.getOddsOrders().forEach(oddsOrder -> {
+                        oddsOrder.setLotteryOrderId(lotteryOrder.getId());
+                        oddsOrder.setId(UUID.randomUUID().toString());
+                        oddsOrderMapper.insert(oddsOrder);
+                    });
+
                 }
                 //总进球
                 if (!CollectionUtils.isEmpty(lotteryOrder.getTtgOrders())) {
@@ -519,8 +526,47 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
     }
 
     @Override
-    public LotteryOrder getLotteryOrderByOrderNO(String orderNo) {
-        return lotteryOrderMapper.selectOne(new QueryWrapper<LotteryOrder>().eq("order_no", orderNo));
+    public LotteryOrderVO getLotteryOrderByOrderNO(String orderNo) {
+        ModelMapper modelMapper = new ModelMapper();
+
+        NewBeeMallOrder newBeeMallOrder = newBeeMallOrderMapper.selectByOrderNo(orderNo);
+        LotteryOrderVO lotteryOrderVO = modelMapper.map(newBeeMallOrder, LotteryOrderVO.class);
+        List<LotteryOrder> list = lotteryOrderMapper.selectList(new QueryWrapper<LotteryOrder>().eq("order_no", orderNo));
+        list.forEach(lotteryOrder -> {
+            switch (lotteryOrder.getType()) {
+                case HALF_COURT:
+                    List<HalfCourtOrder> halfCourtOrders = halfCourtOrderMapper.selectList(new QueryWrapper<HalfCourtOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setHalfCourtOrders(halfCourtOrders);
+                    break;
+                case TOTAL_SCORE:
+                    List<TtgOrder> ttgOrders = ttgOrderMapper.selectList(new QueryWrapper<TtgOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setTtgOrders(ttgOrders);
+                    break;
+                case SCORE:
+                    List<CrsOrder> crsOrders = crsOrderMapper.selectList(new QueryWrapper<CrsOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setCrsOrders(crsOrders);
+                    break;
+                case MIXED:
+                    List<HalfCourtOrder> halfCourtOrdersMixed = halfCourtOrderMapper.selectList(new QueryWrapper<HalfCourtOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setHalfCourtOrders(halfCourtOrdersMixed);
+                    List<TtgOrder> ttgOrdersMixed = ttgOrderMapper.selectList(new QueryWrapper<TtgOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setTtgOrders(ttgOrdersMixed);
+                    List<OddsOrder> oddsOrdersMixed = oddsOrderMapper.selectList(new QueryWrapper<OddsOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setOddsOrders(oddsOrdersMixed);
+                    List<CrsOrder> crsOrdersMixed = crsOrderMapper.selectList(new QueryWrapper<CrsOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setCrsOrders(crsOrdersMixed);
+                    break;
+                case VICTORY:
+                    List<OddsOrder> oddsOrders = oddsOrderMapper.selectList(new QueryWrapper<OddsOrder>().eq("lottery_order_id", lotteryOrder.getId()));
+                    lotteryOrder.setOddsOrders(oddsOrders);
+                    break;
+            }
+        });
+        lotteryOrderVO.setLotteryOrders(list);
+        //查看图片
+        List<ImgOrder> imgOrders = imgOrderMapper.selectList(new QueryWrapper<ImgOrder>().eq("deleted", 0).eq("lottery_order_id", newBeeMallOrder.getOrderNo()));
+        lotteryOrderVO.setImgOrders(imgOrders);
+        return lotteryOrderVO;
     }
 
     @Override

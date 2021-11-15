@@ -71,4 +71,6 @@ public class CommonController {
         // 输出图片流
         captcha.out(httpServletResponse.getOutputStream());
     }
+
+
 }

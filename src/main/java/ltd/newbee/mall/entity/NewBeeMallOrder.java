@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ltd.newbee.mall.common.GameType;
 
 import java.util.Date;
 
@@ -58,6 +59,17 @@ public class NewBeeMallOrder {
     private Date updateTime;
 
     private String orderType;
+
+    /**
+     * 订单类型
+     */
+    private GameType gameType;
+
+    @ApiModelProperty("是否上传照片 0 未上传 1上传")
+    private Byte uploadedImg;
+
+    @ApiModelProperty("奖金范围")
+    private String winPriceArray;
 
     public Long getOrderId() {
         return orderId;
@@ -169,6 +181,30 @@ public class NewBeeMallOrder {
 
     public void setOrderType(String orderType) {
         this.orderType = orderType;
+    }
+
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    public Byte getUploadedImg() {
+        return uploadedImg;
+    }
+
+    public void setUploadedImg(Byte uploadedImg) {
+        this.uploadedImg = uploadedImg;
+    }
+
+    public String getWinPriceArray() {
+        return winPriceArray;
+    }
+
+    public void setWinPriceArray(String winPriceArray) {
+        this.winPriceArray = winPriceArray;
     }
 
     @Override

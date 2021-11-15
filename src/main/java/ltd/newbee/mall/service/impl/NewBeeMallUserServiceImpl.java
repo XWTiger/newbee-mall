@@ -37,13 +37,14 @@ public class NewBeeMallUserServiceImpl implements NewBeeMallUserService {
     }
 
     @Override
-    public String register(String loginName, String password) {
+    public String register(String loginName, String password, Integer userId) {
         if (mallUserMapper.selectByLoginName(loginName) != null) {
             return ServiceResultEnum.SAME_LOGIN_NAME_EXIST.getResult();
         }
         MallUser registerUser = new MallUser();
         registerUser.setLoginName(loginName);
         registerUser.setNickName(loginName);
+        registerUser.setRelateAdminId(userId);
         String passwordMD5 = MD5Util.MD5Encode(password, "UTF-8");
         registerUser.setPasswordMd5(passwordMD5);
         if (mallUserMapper.insertSelective(registerUser) > 0) {

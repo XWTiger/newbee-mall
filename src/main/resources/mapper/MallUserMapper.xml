@@ -26,6 +26,9 @@
         <if test="loginName!=null and loginName!=''">
             and login_name = #{loginName}
         </if>
+        <if test="adminUserId != null and adminUserId > 0">
+            and relate_admin_id = #{adminUserId}
+        </if>
         order by create_time desc
         <if test="start!=null and limit!=null">
             limit #{start},#{limit}
@@ -102,6 +105,9 @@
             <if test="createTime != null">
                 create_time,
             </if>
+            <if test="relateAdminId != null">
+                relate_admin_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -130,6 +136,9 @@
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="relateAdminId != null">
+                #{relateAdminId, jdbcType=BIGINT}
             </if>
         </trim>
     </insert>

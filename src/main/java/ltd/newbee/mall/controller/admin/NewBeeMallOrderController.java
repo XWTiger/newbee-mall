@@ -10,7 +10,9 @@ package ltd.newbee.mall.controller.admin;
 
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.controller.vo.NewBeeMallOrderItemVO;
+import ltd.newbee.mall.entity.LotteryOrderVO;
 import ltd.newbee.mall.entity.NewBeeMallOrder;
+import ltd.newbee.mall.entity.lottery.football.LotteryOrder;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
 import ltd.newbee.mall.util.PageQueryUtil;
 import ltd.newbee.mall.util.Result;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,9 +53,18 @@ public class NewBeeMallOrderController {
      */
     @RequestMapping(value = "/orders/list", method = RequestMethod.GET)
     @ResponseBody
-    public Result list(@RequestParam Map<String, Object> params) {
+    public Result list(@RequestParam Map<String, Object> params, HttpSession httpSession) {
         if (StringUtils.isEmpty(params.get("page")) || StringUtils.isEmpty(params.get("limit"))) {
             return ResultGenerator.genFailResult("参数异常！");
+        }
+        if (Objects.isNull(httpSession.getAttribute("loginUserId"))) {
+            return ResultGenerator.genFailResult("用户没有登录！");
+        }
+        int userId = (int)httpSession.getAttribute("loginUserId");
+
+
+        if ( 1 != userId) {
+            params.put("userId", userId);
         }
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         return ResultGenerator.genSuccessResult(newBeeMallOrderService.getNewBeeMallOrdersPage(pageUtil));
@@ -143,5 +155,10 @@ public class NewBeeMallOrderController {
         }
     }
 
-
+    @GetMapping("/lottery-order")
+    public String getLotteryOrder(@RequestParam("orderNo") String orderNo, HttpServletRequest request) {
+        LotteryOrderVO lotteryOrder =  newBeeMallOrderService.getLotteryOrderByOrderNO(orderNo);
+        request.setAttribute("lotteryOrderVO", lotteryOrder);
+        return "admin/lotteryOrder.html";
+    }
 }

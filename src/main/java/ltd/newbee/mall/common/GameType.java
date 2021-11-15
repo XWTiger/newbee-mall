@@ -26,7 +26,7 @@ public enum GameType {
     MIXED,
 
     /**
-     * 双色球
+     * 7星彩
      */
     UNION_LOTTO,
 
@@ -38,5 +38,10 @@ public enum GameType {
     /**
      * 排列5
      */
-    ARRANGE5
+    ARRANGE5,
+
+    /**
+     * 大乐透
+     */
+    SUPER_LOTTO
 }

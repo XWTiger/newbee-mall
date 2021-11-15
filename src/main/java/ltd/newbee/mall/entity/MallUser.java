@@ -34,6 +34,7 @@ public class MallUser {
 
     private Integer relateAdminId;
 
+
     public Long getUserId() {
         return userId;
     }

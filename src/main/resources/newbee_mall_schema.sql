@@ -1025,7 +1025,7 @@ INSERT INTO `tb_newbee_mall_user` VALUES (8, '测试用户3', '13911113333', 'dd
 
 
 
-CREATE TABLE `crs_order` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `crs_order` (
     `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `core` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '比分',
@@ -1037,7 +1037,7 @@ CREATE TABLE `crs_order` IF NOT EXISTS (
 -- Table structure for half_court_order
 -- ----------------------------
 
-CREATE TABLE `half_court_order` IF NOT EXISTS  (
+CREATE TABLE IF NOT EXISTS  `half_court_order`   (
     `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `detail` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '半全场： 胜w， 平d 负l； ww（胜胜） ， wd (胜平)， dl(平负) ， ll(负负), 类推',
@@ -1049,7 +1049,7 @@ CREATE TABLE `half_court_order` IF NOT EXISTS  (
 -- Table structure for lottery_order
 -- ----------------------------
 
-CREATE TABLE `lottery_order` IF NOT EXISTS  (
+CREATE TABLE IF NOT EXISTS `lottery_order`   (
     `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `order_no` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单号',
     `type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -1069,7 +1069,7 @@ CREATE TABLE `lottery_order` IF NOT EXISTS  (
 -- Table structure for total_goal
 -- ----------------------------
 
-CREATE TABLE `total_goal` IF NOT EXISTS  (
+CREATE TABLE IF NOT EXISTS `total_goal`   (
     `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `goal` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '进球数',
@@ -1081,7 +1081,7 @@ CREATE TABLE `total_goal` IF NOT EXISTS  (
 -- Table structure for win_defeat_order
 -- ----------------------------
 
-CREATE TABLE `win_defeat_order` IF NOT EXISTS  (
+CREATE TABLE IF NOT EXISTS `win_defeat_order`  (
     `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `lottery_order_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `goal_line` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主队让球情况 -1 被让 ， 空 不让球， 1 让一球',
@@ -1103,7 +1103,7 @@ ALTER TABLE `newbee_mall_db`.`lottery_order`
     ADD COLUMN `uploaded_img` tinyint NULL COMMENT '0 未上传票单， 1 已经上传票单' AFTER `rule`;
 
 
-CREATE TABLE `admin_integral` IF NOT EXISTS  (
+CREATE TABLE  IF NOT EXISTS `admin_integral` (
                                    `id` int NOT NULL AUTO_INCREMENT,
                                    `admin_user_id` bigint NULL DEFAULT NULL COMMENT '管理员id',
                                    `integral` bigint NULL DEFAULT NULL COMMENT '积分',
@@ -1115,7 +1115,7 @@ CREATE TABLE `admin_integral` IF NOT EXISTS  (
 -- Table structure for img_order
 -- ----------------------------
 
-CREATE TABLE `img_order` IF NOT EXISTS   (
+CREATE TABLE IF NOT EXISTS `img_order`  (
                               `id` bigint NOT NULL AUTO_INCREMENT,
                               `img_address` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图片地址',
                               `deleted` tinyint NULL DEFAULT NULL COMMENT '0 未删除 1删除',
@@ -1127,7 +1127,7 @@ CREATE TABLE `img_order` IF NOT EXISTS   (
 -- Table structure for notice
 -- ----------------------------
 
-CREATE TABLE `notice`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `notice` (
                            `id` bigint NOT NULL AUTO_INCREMENT,
                            `notice_content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '通知内容',
                            `type` tinyint NULL DEFAULT NULL COMMENT '0 普通用户 1 管理员',
@@ -1140,9 +1140,16 @@ CREATE TABLE `notice`  IF NOT EXISTS (
 -- Table structure for user_happy_value
 -- ----------------------------
 
-CREATE TABLE `user_happy_value` IF NOT EXISTS  (
+CREATE TABLE  IF NOT EXISTS `user_happy_value`  (
                                      `id` int NOT NULL AUTO_INCREMENT,
                                      `happy_num` int NULL DEFAULT NULL COMMENT '欢乐豆',
                                      `relate_id` bigint NULL DEFAULT NULL COMMENT '关联普通用户id',
                                      PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+
+ALTER TABLE `tb_newbee_mall_order`
+ADD COLUMN `order_type`  varchar(255) NOT NULL COMMENT '订单类型：LOTTERY' AFTER `update_time`;
+
+ALTER TABLE `lottery_order`
+ADD COLUMN `order_date`  timestamp NULL  COMMENT '日期' AFTER `uploaded_img`;

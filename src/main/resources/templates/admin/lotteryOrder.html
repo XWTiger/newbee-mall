@@ -1,0 +1,271 @@
+<!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment">
+</header>
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        white-space: normal !important;
+        height: auto;
+        vertical-align: text-top;
+        padding-top: 2px;
+    }
+
+    a {
+        color: #1baeae;
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    a:hover {
+        color: white;
+        background-color: #1baeae;
+    }
+</style>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="admin/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains 图标content -->
+    <div class="content-wrapper">
+        <!-- Content Header (图标header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline ">
+                    <div class="card-header">
+                        <h3 class="card-title">彩票订单</h3>
+                    </div> <!-- /.card-body -->
+                   <!-- <div class="row mb-2">
+                        <div class="mx-auto">
+                            <B> 主队： </B> <span class="col-auto" th:text="${lotteryOrder.homeTeamAbbName}"></span> <B class="col-auto">VS</B>  <B class="col-auto"> 客队：</B>
+                            <span class="col-auto" th:text="${lotteryOrder.awayTeamAbbName}"></span>
+                        </div>
+                    </div>-->
+                    <div class="row mb-2">
+                         <div class="col ml-1">
+                             <h5>订单日期：</h5>
+                             <p th:text="${#dates.format(lotteryOrderVO.createTime, 'yyyy-MM-dd HH:mm')}"></p>
+                         </div>
+                        <div class="col ml-1">
+                            <h5>订单号：</h5>
+                            <p id="lottery-order-no" th:text="${lotteryOrderVO.orderNo}"></p>
+                        </div>
+                        <div class="col ml-1">
+                            <h5>过关方式：</h5>
+                            <p id="lottery-order-rule" th:text="${#strings.replace(lotteryOrderVO.lotteryOrders[0].rule,'v', '串')}"></p>
+                        </div>
+                        <div class="col ml-1">
+                            <h5>价格：</h5>
+                            <p th:text="${lotteryOrderVO.totalPrice}" style="display: inline" ></p><B>(积分)</B>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col ml-1">
+                            <h5>倍数：</h5>
+                            <p th:text="${lotteryOrderVO.lotteryOrders[0].times}" style="display: inline" ></p><B>(倍)</B>
+                        </div>
+                        <div class="col themed-grid-col">
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='VICTORY'}" th:text="胜平负">胜负平</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='SCORE'}">比分</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='TOTAL_SCORE'}">总进球</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='HALF_COURT'}"
+                                    th:text="半全场胜平负">半全场胜平负</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='MIXED'}">混合过关</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='UNION_LOTTO'}">7星彩</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='ARRANGE3'}">排列3</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='ARRANGE5' }">排列5</strong>
+                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                    th:if="${lotteryOrderVO.gameType+''=='SUPER_LOTTO'}">大乐透</strong>
+                        </div>
+                    </div>
+                    <!--彩票内容-->
+                    <div class="row mb-2" >
+                        <div class="col-md-6" th:each="lottery:${lotteryOrderVO.lotteryOrders}">
+                            <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                                <div class="col p-2 d-flex flex-column position-static">
+                                   <!-- <strong class="d-inline-block mb-2 text-primary" th:text="${lottery.leagueName}"></strong>-->
+
+                                    <div class="row">
+                                        <div class="col-md-4 themed-grid-col">
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='VICTORY'}" th:text="胜平负">胜负平</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='SCORE'}">比分</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='TOTAL_SCORE'}">总进球</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='HALF_COURT'}"
+                                                    th:text="半全场胜平负">半全场胜平负</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='MIXED'}">混合过关</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='UNION_LOTTO'}">7星彩</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='ARRANGE3'}">排列3</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='ARRANGE5' }">排列5</strong>
+                                            <strong class="mb-0 d-inline-block mb-2 text-primary"
+                                                    th:if="${lottery.type+''=='SUPER_LOTTO'}">大乐透</strong>
+
+                                            <div class="mb-1 text-muted"
+                                                 th:text="${lottery.matchNumStr}"></div>
+                                        </div>
+                                        <div class="col full-width-chart">
+                                            <div class="mx-auto mt-3" th:if="${lottery.leagueName != null && lottery.leagueName +''!=''}">
+                                                <B> 主队： </B> <span class="col-auto" th:text="${lottery.homeTeamAbbName}"></span> <B class="col-auto " style="display: inline">VS</B>  <B class="col-auto"> 客队：</B>
+                                                <span class="col-auto" th:text="${lottery.awayTeamAbbName}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <th:block th:if="${lottery.type+''=='HALF_COURT'}">
+                                        <div class="row">
+                                            <div class="col-auto" th:each="harlf:${lottery.halfCourtOrders}">
+                                                <span   id="harlf-court-detail" th:text="${harlf.detail}"></span>
+                                                <span class="badge badge-danger" th:text="${harlf.detailOdds}"></span>
+                                            </div>
+
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${lottery.type+''=='VICTORY'}">
+                                        <div class="row">
+                                            <div class="col">
+                                                让球：<span th:if="${lottery.oddsOrders[0].goalLine==null || lottery.oddsOrders[0].goalLine+''==''}">-</span>
+                                                <span th:if="${lottery.oddsOrders[0].goalLine!=null || lottery.oddsOrders[0].goalLine+''!=''}" th:text="${lottery.oddsOrders[0].goalLine}"></span>
+                                            </div>
+                                            <div class="col" th:each="odd:${lottery.oddsOrders}">
+                                                <span   id="harlf-co urt-detail" th:if="${odd.homeWin}">主胜</span>
+                                                <span class="badge badge-danger" th:if="${odd.homeWin}" th:text="${odd.homeWinOdds}"></span>
+                                                <span   id="harlf-co urt-detail" th:if="${odd.homeDraw}">平局</span>
+                                                <span class="badge badge-danger" th:if="${odd.homeDraw}" th:text="${odd.homeDrawOdds}"></span>
+                                                <span   id="harlf-co urt-detail" th:if="${odd.visitingWin}">客胜</span>
+                                                <span class="badge badge-danger" th:if="${odd.visitingWin}" th:text="${odd.visitingWinOdds}"></span>
+                                            </div>
+
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${lottery.type+''=='SCORE'}">
+                                        <div class="row">
+                                            <div class="col-auto" th:each="score:${lottery.crsOrders}">
+                                                <span   id="harlf-court-detail" th:text="${score.core}"></span>
+                                                <span class="badge badge-danger" th:text="${score.coreOdds}"></span>
+                                            </div>
+
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${lottery.type+''=='TOTAL_SCORE'}">
+                                        <div class="row">
+                                            <div class="col-auto" th:each="ttscore:${lottery.ttgOrders}">
+                                                <span   id="harlf-court-detail" th:text="${ttscore.goal}"></span>
+                                                <span class="badge badge-danger" th:text="${ttscore.goalOdds}"></span>
+                                            </div>
+
+                                        </div>
+                                    </th:block>
+
+                                    <th:block th:if="${lottery.type+''=='UNION_LOTTO' || lottery.type+''=='ARRANGE3' || lottery.type+''=='ARRANGE5' || lottery.type+''=='SUPER_LOTTO'}">
+
+                                            <th:block class="row" th:each="score:${#strings.listSplit(lottery.numbers, '|')}">
+                                                <span  class="font-size-2"  th:text="${score}"></span>
+                                            </th:block>
+
+                                    </th:block>
+
+
+                                    <a href="#" class="stretched-link">好运在眷顾你， 我的朋友</a>
+                                </div>
+                                <div class="col-auto d-none d-lg-block">
+                                    <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                                        <title>比赛信息</title>
+                                        <rect width="100%" height="100%" fill="#eb133b"/>
+                                        <text   x="25%" y="50%"   font-size="20" fill="#f8f9fa" dy=".3em" th:text="${lottery.leagueName}" >
+                                        </text>
+                                        <text   x="25%" y="50%"   font-size="20" fill="#f8f9fa" dy=".3em" th:if="${lottery.leagueName +'' == '' || lottery.leagueName==null}" th:text="天天走好运" >
+                                        </text>
+                                    </svg>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row" >
+                            <div class="col" th:each="img:${lotteryOrderVO.imgOrders}">
+                                <img th:width="200px" th:height="300px" th:src="${img.imgAddress}">
+                            </div>
+                    </div>
+                    <div class="row mb-2 fileupload-buttonbar">
+                        <div class="col mb-2 fileupload-buttonbar">
+                                <span class="btn btn-success fileinput-button" id="fileupload-new-button">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <span>添加图片</span>
+                                 </span>
+                            <button type="button" class="btn btn-outline-danger" onclick="noticeUser()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                                </svg>
+                                <span>通知用户</span>
+                            </button>
+                            <input id="fileupload" style="display: none" type="file" name="files[]" multiple />
+                        </div>
+
+                        <div id="progress">
+                            <div class="bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- jqgrid -->
+<script th:src="@{/admin/plugins/jqgrid-5.5.2/jquery.jqGrid.min.js}"></script>
+<script th:src="@{/admin/plugins/jqgrid-5.5.2/grid.locale-cn.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/admin/dist/js/lottery_order.js}"></script>
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<!--<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-ui.js}"></script>-->
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/vendor/jquery.ui.widget.js}"></script>
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.iframe-transport.js}"></script>
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload.js}"></script>
+<!--
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-process.js}"></script>
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-audio.js}"></script>
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-image.js}"></script>
+<script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-validate.js}"></script>
+-->
+
+<script>
+
+</script>
+</body>
+</html>
