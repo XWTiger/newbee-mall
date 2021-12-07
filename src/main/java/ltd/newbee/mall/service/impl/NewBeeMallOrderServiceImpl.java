@@ -20,10 +20,7 @@ import ltd.newbee.mall.entity.common.Notice;
 import ltd.newbee.mall.entity.common.PageCL;
 import ltd.newbee.mall.entity.lottery.football.*;
 import ltd.newbee.mall.service.NewBeeMallOrderService;
-import ltd.newbee.mall.util.BeanUtil;
-import ltd.newbee.mall.util.NumberUtil;
-import ltd.newbee.mall.util.PageQueryUtil;
-import ltd.newbee.mall.util.PageResult;
+import ltd.newbee.mall.util.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -449,13 +447,29 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
         lotteryOrderVO.setOrderNo(orderNo);
         lotteryOrderVO.setOrderType("LOTTERY");
         lotteryOrderVO.setIsDeleted((byte) 0);
+        lotteryOrderVO.setPayStatus((byte) 0);
+        lotteryOrderVO.setPayType((byte) 3);
+        lotteryOrderVO.setOrderStatus((byte) 0);
+        lotteryOrderVO.setUpdateTime(new Date());
         //校验 用户是否存在
         MallUser user = mallUserMapper.selectByPrimaryKey(lotteryOrderVO.getUserId());
         if (Objects.isNull(user)) {
             throw new Exception("用户不存在");
         }
-        //TODO 校验价格
+        //校验玩法
+        checkRule(lotteryOrderVO);
+
+        //校验价格
+        Integer price = getPrice(lotteryOrderVO);
+        if (price != lotteryOrderVO.getTotalPrice()) {
+            throw new Exception("价格不能对账！");
+        }
+        //计算中奖范围
+        lotteryOrderVO.setWinPriceArray("" + getMinprize(lotteryOrderVO) + " ~ " + winMaxPrize(lotteryOrderVO) );
         //校验订单 至少要买一种
+        if (CollectionUtils.isEmpty(lotteryOrderVO.getLotteryOrders())) {
+            throw new Exception("至少买一种玩法！");
+        }
 
         //订单（基础）
         newBeeMallOrderMapper.insert(lotteryOrderVO);
@@ -464,7 +478,7 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
         if (!CollectionUtils.isEmpty(lotteryOrderVO.getLotteryOrders())) {
             lotteryOrderVO.getLotteryOrders().forEach(lotteryOrder -> {
                 lotteryOrder.setId(UUID.randomUUID().toString());
-              /*  lotteryOrder.setOrderDate(new Date());*/
+                /*  lotteryOrder.setOrderDate(new Date());*/
                 lotteryOrder.setOrderNo(orderNo);
             });
             lotteryOrderMapper.insertList(lotteryOrderVO.getLotteryOrders());
@@ -509,7 +523,7 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
         //订单生成完成，通知管理员（店主） 打票
         Notice notice = new Notice();
         notice.setNoticeContent("用户: " + user.getLoginName() + ", 已经下单");
-        notice.setRelate_id(user.getUserId());
+        notice.setRelateId(user.getUserId());
         notice.setType((byte) 1);
         noticeMapper.insert(notice);
 
@@ -523,6 +537,137 @@ public class NewBeeMallOrderServiceImpl implements NewBeeMallOrderService {
         userHappyNumMapper.updateById(userHappyNum);
 
         return orderNo;
+    }
+
+    /**
+     * 符合返回false
+     * @return
+     */
+    private void checkRule(LotteryOrderVO lotteryOrderVO) throws Exception {
+
+        switch (lotteryOrderVO.getGameType()) {
+            case SCORE:
+                return ;
+            case VICTORY:
+            case TOTAL_SCORE:
+            case MIXED:
+            case HALF_COURT: {
+                String[] games = lotteryOrderVO.getRules().split(",");
+                for (int i = 0; i < games.length; i++) {
+                    if (!StringUtils.isEmpty(games[i])) {
+                        if (Objects.nonNull(LotteryUtils.notSupportOneGame.get(games[i]))) {
+                            throw new Exception(games[i].replaceAll("v", "串") + "不支持！");
+                        }
+                    }
+                }
+
+            }
+
+        }
+        return ;
+    }
+
+    private Integer getPrice(LotteryOrderVO lotteryOrderVO) throws Exception {
+        int record = 0;//注数
+        //获取玩法
+        //3v1,2v1
+        String[] games = lotteryOrderVO.getRules().split(",");
+        for (int i = 0; i < games.length; i++) {
+            if (!StringUtils.isEmpty(games[i])) {
+                if (Integer.valueOf(games[i].split("v")[0]) <= lotteryOrderVO.getLotteryOrders().size()) {
+                    //总游戏场数必须小于等于 玩法规则， 比如3串4 至少3场
+                   Integer[] ways = LotteryUtils.getGames(games[i]);
+                    int totalWay = Integer.valueOf(games[i].split("v")[1]);
+                    int count = LotteryUtils.mathCmn(lotteryOrderVO.getLotteryOrders().size(), Integer.valueOf(games[i].split("v")[0]));
+                    record = record + (totalWay * count);
+                } else {
+                    throw new Exception("场数必须大于等于购买玩法，比如3串4 至少3场");
+                }
+
+            }
+        }
+        //乘以倍数
+        return record * lotteryOrderVO.getTimes() * 2;
+    }
+
+    //没有单场玩法的在matrix 里面不能有单场玩法
+    private double getMinprize(LotteryOrderVO lotteryOrderVO) {
+        //获取最小玩法
+        String[] games = lotteryOrderVO.getRules().split(",");
+        int minGame = 0;
+        int index = 0;
+        for (int i = 0; i < games.length; i++) {
+            //
+            if (!StringUtils.isEmpty(games[i])) {
+                int buffer = Integer.valueOf(games[i].split("v")[0]);
+                if (minGame == 0) {
+                    minGame = buffer;
+                } else {
+                    if (minGame > buffer) {
+                        minGame = buffer;
+                        index = i;
+                    }
+                }
+            }
+        }
+        // 一般没有单关， 没有单关就不包含单关的玩法表
+        //获取最小的组合
+        int minIndex = 0;
+        Integer[] ways = LotteryUtils.matrixNumber.get(games[index]);
+        for (int i = 0; i < ways.length; i++) {
+            if (ways[i] > 0) {
+                minIndex = i;
+                break;
+            }
+        }
+        List<Double> odds = LotteryUtils.getOddsByLotteryVos(lotteryOrderVO.getLotteryOrders());
+        double winPrize = 1;
+        for (int i = 0; i < minIndex + 1; i++) {
+            winPrize = winPrize * odds.get(i);
+        }
+        return winPrize * 2;
+    }
+
+    /**
+     * 最高奖金， 所有组合都中奖
+     * @param lotteryOrderVO
+     * @return
+     */
+    public double winMaxPrize(LotteryOrderVO lotteryOrderVO) {
+        Vector<Double> odds = LotteryUtils.coverArrayListToVector(LotteryUtils.getOddsByLotteryVos(lotteryOrderVO.getLotteryOrders()));
+        String[] games = lotteryOrderVO.getRules().split(",");
+        double prize = 0.0;
+        for (int i = 0; i < games.length; i++) { // 遍历玩法
+            if (!StringUtils.isEmpty(games[i])) {
+                Integer[] ways = LotteryUtils.getGames(games[i]); //eg: 3v1
+                //获取 选择总比赛场次中的3场（3v1）
+                Vector<Vector<Double>> subLine = LotteryUtils.subsets(odds, odds.size(), Integer.valueOf(games[i].split("v")[0]));
+                for (Vector<Double> subList : subLine) {
+                    //累计每关的奖励
+                    for (int i1 = 0; i1 < ways.length; i1++) {
+                        if (ways[i1] > 0) {
+                            Vector<Vector<Double>> combines = LotteryUtils.subsets(subList, subList.size(), i1 + 1); //C n m
+                            if (combines.size() > 0) {
+                                double total = 0.0;
+                                for (Vector<Double> doubles : combines) {
+                                    AtomicReference<Double> count = new AtomicReference<>(1.0);
+                                    doubles.forEach(aDouble -> {
+                                        count.set(count.get() * aDouble);
+                                    });
+                                    total = total + count.get();
+                                }
+                                prize = prize + total;
+                            } else {
+                                System.out.println("can not find any vectors of cnm");
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }
+        return prize * 2;
     }
 
     @Override

@@ -22,6 +22,6 @@ public class HalfCourtOrder {
     private String detail;
 
     @ApiModelProperty("半全场赔率")
-    private String detailOdds;
+    private Double detailOdds;
 
 }

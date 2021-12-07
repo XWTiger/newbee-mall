@@ -93,6 +93,9 @@ $(function () {
         if (cellvalue == 2) {
             return "微信支付";
         }
+        if (cellvalue == 3) {
+            return "欢乐豆";
+        }
     }
 
     $(window).resize(function () {

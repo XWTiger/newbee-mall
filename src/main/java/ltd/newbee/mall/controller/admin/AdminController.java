@@ -8,14 +8,21 @@
  */
 package ltd.newbee.mall.controller.admin;
 
+import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import ltd.newbee.mall.common.ResultModel;
 import ltd.newbee.mall.common.ServiceResultEnum;
+import ltd.newbee.mall.dao.NoticeMapper;
 import ltd.newbee.mall.entity.AdminUser;
 import ltd.newbee.mall.entity.common.Notice;
 import ltd.newbee.mall.service.AdminUserService;
 
+import ltd.newbee.mall.service.NoticeService;
+import ltd.newbee.mall.util.SystemUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,10 +37,16 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 @RequestMapping("/admin")
+@Api(description = "管理员相关接口")
+@Slf4j
+@Validated
 public class AdminController {
 
     @Resource
     private AdminUserService adminUserService;
+
+    @Autowired
+    private NoticeService noticeService;
 
     @GetMapping({"/login"})
     public String login() {
@@ -139,21 +152,44 @@ public class AdminController {
     }
 
     @PostMapping("/notice/user")
+    @ApiOperation("给用户发通知消息")
     @ResponseBody
-    public ResultModel noticeUser(@RequestBody Notice notice) {
+    public ResultModel noticeUser(@RequestBody @Validated Notice notice) {
 
-        return null;
+        ResultModel resultModel = new ResultModel();
+        try {
+            return noticeService.noticeUser(notice);
+        } catch (Exception e) {
+            log.error("notice set read failed", e);
+            resultModel.setStatusCode(0);
+            if (SystemUtil.isContainChinese(e.getMessage())) {
+                resultModel.setResouce(e.getMessage());
+            } else {
+                resultModel.setStatusMes("设置已读失败");
+            }
+        }
+        return resultModel;
     }
 
-    @PostMapping("/notice/user/read")
+
+
+    @GetMapping("/notice/user")
+    @ApiOperation("获取用户通知消息")
     @ResponseBody
-    public ResultModel read(@RequestBody Notice notice) {
+    public ResultModel getNoticeByUserId(@RequestParam("userId") Integer userId, @RequestParam("type") Integer type) {
 
-        return null;
-    }
-
-    public ResultModel getNoticeByUserId() {
-
-        return null;
+        ResultModel resultModel = new ResultModel();
+        try {
+            return noticeService.getNoticeByUserId(userId, type);
+        } catch (Exception e) {
+            log.error("notice set read failed", e);
+            resultModel.setStatusCode(0);
+            if (SystemUtil.isContainChinese(e.getMessage())) {
+                resultModel.setResouce(e.getMessage());
+            } else {
+                resultModel.setStatusMes("设置已读失败");
+            }
+        }
+        return resultModel;
     }
 }

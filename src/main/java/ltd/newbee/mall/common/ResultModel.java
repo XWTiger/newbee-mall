@@ -54,4 +54,10 @@ public class ResultModel<T> {
     public void setResouce(String resouce) {
         this.resouce = resouce;
     }
+
+
+    public ResultModel generateSuccess(T content) {
+        this.content = content;
+        return this;
+    }
 }

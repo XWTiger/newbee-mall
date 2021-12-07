@@ -16,13 +16,15 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
-        <result column="game_type" jdbcType="VARCHAR" property="gameType"/>
+        <result column="game_type" jdbcType="VARCHAR"  property="gameType"/>
         <result column="win_price_array" jdbcType="VARCHAR" property="winPriceArray"/>
         <result column="uploaded_img" jdbcType="VARCHAR" property="uploadedImg"/>
+        <result column="times" jdbcType="INTEGER" property="times"/>
+        <result column="rules" jdbcType="VARCHAR" property="rules"/>
     </resultMap>
     <sql id="Base_Column_List">
     order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status,
-    extra_info, user_name, user_phone, user_address, is_deleted, create_time, update_time, order_type, game_type,win_price_array,uploaded_img
+    extra_info, user_name, user_phone, user_address, is_deleted, create_time, update_time, order_type, game_type,win_price_array,uploaded_img,times, rules, win_price_array
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -113,12 +115,13 @@
     insert into tb_newbee_mall_order (order_id, order_no, user_id, 
       total_price, pay_status, pay_type, 
       pay_time, order_status, extra_info, 
-      user_address,is_deleted, create_time, update_time,order_type,game_type
+      user_address,is_deleted, create_time, update_time,order_type,game_type,win_price_array,rules,times
       )
     values (#{orderId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
       #{totalPrice,jdbcType=INTEGER}, #{payStatus,jdbcType=TINYINT}, #{payType,jdbcType=TINYINT}, 
       #{payTime,jdbcType=TIMESTAMP}, #{orderStatus,jdbcType=TINYINT}, #{extraInfo,jdbcType=VARCHAR}, 
-       #{userAddress,jdbcType=VARCHAR},#{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{orderType,jdbcType=VARCHAR},#{gameType,jdbcType=VARCHAR}
+       #{userAddress,jdbcType=VARCHAR},#{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},#{orderType,jdbcType=VARCHAR},#{gameType,jdbcType=VARCHAR},
+       #{winPriceArray, jdbcType=VARCHAR}, #{rules, jdbcType=VARCHAR},  #{times, jdbcType=INTEGER}
       )
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="orderId"
@@ -176,6 +179,12 @@
             <if test="uploadedImg != null">
                 uploaded_img,
             </if>
+            <if test="times != null">
+                times,
+            </if>
+            <if test="rules != null">
+                rules,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderId != null">
@@ -228,6 +237,12 @@
             </if>
             <if test="uploadedImg != null">
                 #{uploadedImg,jdbcType=VARCHAR},
+            </if>
+            <if test="times != null">
+                #{times,jdbcType=VARCHAR},
+            </if>
+            <if test="rules != null">
+                rules,
             </if>
 
         </trim>

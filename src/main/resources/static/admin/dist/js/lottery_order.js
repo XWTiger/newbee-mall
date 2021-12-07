@@ -95,12 +95,29 @@ $(function () {
     });
 });
 
-function noticeUser() {
-    swal({
-        title: "推送打票成功",
-        text: "确认要执行通知操作吗?",
-        icon: "success",
-        buttons: true,
-        dangerMode: true
-    })
+function noticeUser(userId) {
+    $.ajax({
+        url: "/admin/notice/user",
+        headers: {
+            Accept: "application/json; charset=utf-8"
+        },
+        contentType: "application/json;charset=UTF-8",
+        type: "post",
+        data: JSON.stringify({noticeContent:'票已上传请查收！', type:0, alreadyRead:0, relateId: 1}),
+        success: function (data) {
+            if (data.resultCode == null || data.resultCode != 500) {
+                swal({
+                    title: "推送打票成功",
+                    icon: "success",
+                    dangerMode: true
+                });
+            } else {
+                swal({
+                    title: "推送打票失败",
+                    icon: "failed",
+                    dangerMode: true
+                });
+            }
+        }
+    });
 }

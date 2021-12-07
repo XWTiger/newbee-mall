@@ -43,5 +43,10 @@ public enum GameType {
     /**
      * 大乐透
      */
-    SUPER_LOTTO
+    SUPER_LOTTO,
+
+    /**
+     * 普通 订单
+     */
+    NORMAL
 }

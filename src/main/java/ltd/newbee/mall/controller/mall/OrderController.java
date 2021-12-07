@@ -174,13 +174,20 @@ public class OrderController {
         } catch (Exception e) {
             resultModel.setStatusCode(0);
             if (SystemUtil.isContainChinese(e.getMessage())) {
-                resultModel.setResouce(e.getMessage());
+                resultModel.setStatusMes(e.getMessage());
             } else {
                 resultModel.setContent("支付订单失败");
             }
             e.printStackTrace();
         }
         return resultModel;
+    }
+
+    @GetMapping("/mall/lottery-order")
+    public String getLotteryOrder(@RequestParam("orderNo") String orderNo, HttpServletRequest request) {
+        LotteryOrderVO lotteryOrder =  newBeeMallOrderService.getLotteryOrderByOrderNO(orderNo);
+        request.setAttribute("lotteryOrderVO", lotteryOrder);
+        return "mall/lotteryOrder.html";
     }
 
 

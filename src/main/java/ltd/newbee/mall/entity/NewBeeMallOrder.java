@@ -8,6 +8,7 @@
  */
 package ltd.newbee.mall.entity;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -54,7 +55,7 @@ public class NewBeeMallOrder {
     private Byte isDeleted;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
+    private Date createTime = new Date();
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
@@ -63,6 +64,7 @@ public class NewBeeMallOrder {
     /**
      * 订单类型
      */
+    @EnumValue
     private GameType gameType;
 
     @ApiModelProperty("是否上传照片 0 未上传 1上传")
@@ -70,6 +72,12 @@ public class NewBeeMallOrder {
 
     @ApiModelProperty("奖金范围")
     private String winPriceArray;
+
+    @ApiModelProperty("倍数")
+    private Integer times;
+
+    @ApiModelProperty("规则： 3串1（写成： 3v1,2v1）多条逗号分隔 ")
+    private String rules;
 
     public Long getOrderId() {
         return orderId;
@@ -205,6 +213,22 @@ public class NewBeeMallOrder {
 
     public void setWinPriceArray(String winPriceArray) {
         this.winPriceArray = winPriceArray;
+    }
+
+    public Integer getTimes() {
+        return times;
+    }
+
+    public void setTimes(Integer times) {
+        this.times = times;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
     }
 
     @Override

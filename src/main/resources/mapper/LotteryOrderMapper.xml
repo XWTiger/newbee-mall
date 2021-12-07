@@ -12,13 +12,12 @@
         <result column="away_team_abb_name" jdbcType="VARCHAR" property="awayTeamAbbName" />
         <result column="match_num_str" jdbcType="VARCHAR" property="matchNumStr" />
         <result column="league_id" jdbcType="INTEGER" property="leagueId" />
-        <result column="times" jdbcType="VARCHAR" property="times" />
-        <result column="rule" jdbcType="VARCHAR" property="rule" />
+        <result column="league_name" jdbcType="VARCHAR" property="leagueName"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, order_no, type, numbers, home_team_code,home_team_abb_name, away_team_code, away_team_abb_name,
-        match_num_str,league_id,times,rule,order_date
+        match_num_str,league_id,order_date
     </sql>
     
     <insert id="insertList" parameterType="java.util.List">
@@ -55,14 +54,11 @@
                 <if test="item.leagueId != null">
                     league_id,
                 </if>
-                <if test="item.times != null">
-                    times,
-                </if>
-                <if test="item.rule != null">
-                    rule,
-                </if>
-                <if test="order_date != null">
+                <if test="item.orderDate != null">
                     order_date,
+                </if>
+                <if test="item.leagueName != null">
+                    league_name,
                 </if>
             </trim>
             <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -97,15 +93,13 @@
                 <if test="item.leagueId != null">
                     #{item.leagueId,jdbcType=INTEGER},
                 </if>
-                <if test="item.times != null">
-                    #{item.times,jdbcType=INTEGER},
-                </if>
-                <if test="item.rule != null">
-                    #{item.rule,jdbcType=VARCHAR},
-                </if>
 
                 <if test="item.orderDate != null">
                     #{item.orderDate,jdbcType=VARCHAR},
+                </if>
+
+                <if test="item.leagueName != null">
+                    #{item.leagueName,jdbcType=VARCHAR},
                 </if>
 
             </trim>

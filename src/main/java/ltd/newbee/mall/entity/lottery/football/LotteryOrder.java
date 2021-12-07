@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ltd.newbee.mall.common.GameType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -61,15 +63,10 @@ public class LotteryOrder {
     private String leagueName;
 
 
-    @ApiModelProperty("倍数")
-    private Integer times;
-
-    @ApiModelProperty("玩法： 比如 3串1(3v1)")
-    private String rule;
-
-
 
     @ApiModelProperty("比赛日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderDate;
 
 
@@ -78,7 +75,7 @@ public class LotteryOrder {
     private List<OddsOrder> oddsOrders;
 
 
-    @ApiModelProperty("比分")
+    @ApiModelProperty("比分 order")
     @TableField(exist = false)
     private List<CrsOrder> crsOrders;
 

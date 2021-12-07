@@ -1,8 +1,6 @@
 <!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<header th:replace="admin/header::header-fragment">
-</header>
 <style>
     .ui-jqgrid tr.jqgrow td {
         white-space: normal !important;
@@ -23,12 +21,16 @@
         background-color: #1baeae;
     }
 </style>
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-    <!-- 引入页面头header-fragment -->
-    <div th:replace="admin/header::header-nav"></div>
-    <!-- 引入工具栏sidebar-fragment -->
-    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+<head th:replace="mall/header::head-fragment('NewBee商城-订单列表','my-orders')">
+</head>
+<body>
+<header th:replace="mall/header::header-fragment"></header>
+
+<div id="personal">
+    <div class="center">
+    <!--<div class="wrapper">-->
+    <!-- nav -->
+    <!--<div th:replace="mall/personal-sidebar::sidebar-fragment"></div>-->
     <!-- Content Wrapper. Contains 图标content -->
     <div class="content-wrapper">
         <!-- Content Header (图标header) -->
@@ -64,7 +66,7 @@
                         </div>
                         <div class="col ml-1">
                             <h5>价格：</h5>
-                            <p th:text="${lotteryOrderVO.totalPrice}" style="display: inline" ></p><B>(积分)</B>
+                            <p th:text="${lotteryOrderVO.totalPrice}" style="display: inline" ></p><B>(欢乐豆)</B>
                         </div>
                         <div class="w-100"></div>
                         <div class="col-3 ml-1">
@@ -219,7 +221,7 @@
                                 <img th:width="200px" th:height="300px" th:src="${img.imgAddress}">
                             </div>
                     </div>
-                    <div class="row mb-2 fileupload-buttonbar">
+                   <!-- <div class="row mb-2 fileupload-buttonbar">
                         <div class="col mb-2 fileupload-buttonbar">
                                 <span class="btn btn-success fileinput-button" id="fileupload-new-button">
                                     <i class="glyphicon glyphicon-plus"></i>
@@ -237,17 +239,17 @@
                         <div id="progress">
                             <div class="bar" style="width: 0%;"></div>
                         </div>
-                    </div>
+                    </div>-->
 
                 </div>
             </div><!-- /.container-fluid -->
         </div>
     </div>
     <!-- /.content-wrapper -->
-    <!-- 引入页脚footer-fragment -->
-    <div th:replace="admin/footer::footer-fragment"></div>
+<!--</div>-->
+    </div>
 </div>
-
+<div th:replace="mall/footer::footer-fragment"></div>
 <!-- jQuery -->
 <script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
 <!-- Bootstrap 4 -->
@@ -271,7 +273,68 @@
 <script th:src="@{/admin/plugins/blueimp-file-upload/js/jquery.fileupload-validate.js}"></script>
 -->
 
-<script>
+<script type="text/javascript">
+    function openUpdateModal() {
+        $('#personalInfoModal').modal('show');
+    }
+
+    //绑定modal上的保存按钮
+    $('#saveButton').click(function () {
+        var address = $("#address").val();
+        if (address.trim().length < 10) {
+            swal("请输入正确的收货信息", {
+                icon: "error",
+            });
+            return;
+        }
+        var introduceSign = $("#introduceSign").val();
+        if (introduceSign.trim().length < 4) {
+            swal("请输入正确的个性签名", {
+                icon: "error",
+            });
+            return;
+        }
+        var nickName = $("#nickName").val();
+        if (nickName.trim().length < 2) {
+            swal("请输入正确的昵称", {
+                icon: "error",
+            });
+            return;
+        }
+        var userId = $("#userId").val();
+        var data = {
+            "userId": userId,
+            "address": address,
+            "introduceSign": introduceSign,
+            "nickName": nickName
+        };
+        $.ajax({
+            type: 'POST',//方法类型
+            url: '/personal/updateInfo',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.resultCode == 200) {
+                    $('#personalInfoModal').modal('hide');
+                    window.location.reload();
+                } else {
+                    $('#personalInfoModal').modal('hide');
+                    alert(result.message);
+                }
+                ;
+            },
+            error: function () {
+                alert('操作失败');
+            }
+        });
+    });
+
+    function order() {
+        window.location.href = "/orders?token=" + sessionStorage.getItem("token");
+    }
+    function personal() {
+        window.location.href = "/personal?token=" + sessionStorage.getItem("token");
+    }
 
 </script>
 </body>

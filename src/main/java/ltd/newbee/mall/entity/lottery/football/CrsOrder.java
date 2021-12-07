@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@ApiModel("比分")
+@ApiModel("比分订单")
 @Data
 @TableName("crs_order")
 public class CrsOrder {
@@ -21,5 +21,5 @@ public class CrsOrder {
     private String core;
 
     @ApiModelProperty("比分赔率")
-    private String coreOdds;
+    private Double coreOdds;
 }

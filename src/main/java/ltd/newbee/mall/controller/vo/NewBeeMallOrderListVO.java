@@ -8,6 +8,11 @@
  */
 package ltd.newbee.mall.controller.vo;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import ltd.newbee.mall.common.GameType;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +20,7 @@ import java.util.List;
 /**
  * 订单列表页面VO
  */
+@Data
 public class NewBeeMallOrderListVO implements Serializable {
 
     private Long orderId;
@@ -32,6 +38,26 @@ public class NewBeeMallOrderListVO implements Serializable {
     private String userAddress;
 
     private Date createTime;
+
+    private String orderType;
+
+    /**
+     * 订单类型
+     */
+    @EnumValue
+    private GameType gameType;
+
+    @ApiModelProperty("是否上传照片 0 未上传 1上传")
+    private Byte uploadedImg;
+
+    @ApiModelProperty("奖金范围")
+    private String winPriceArray;
+
+    @ApiModelProperty("倍数")
+    private Integer times;
+
+    @ApiModelProperty("规则： 3串1（写成： 3v1,2v1）多条逗号分隔 ")
+    private String rules;
 
     private List<NewBeeMallOrderItemVO> newBeeMallOrderItemVOS;
 
